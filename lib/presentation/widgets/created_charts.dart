@@ -12,71 +12,91 @@ class CreatedCharts extends StatelessWidget {
     return BlocBuilder<ChartsCubit, ChartsState>(
       builder: (context, state) {
         if (state is ChartsCreated) {
-          return Container(
-            decoration: BoxDecoration(
-              color: MainColors.neutral010,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: 840 - 32,
-                height: 256 - 32,
-                child: LineChart(
-                  LineChartData(
-                    titlesData: FlTitlesData(
-                      topTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                            showTitles: false), // Убираем подписи сверху
-                      ),
-                      rightTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                            showTitles: false), // Убираем подписи справа
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 32,
-                          getTitlesWidget: (value, meta) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 4),
-                              // Даем немного места справа
-                              child: Text(
-                                value.toStringAsFixed(1),
+          return Wrap(
+            spacing: 16, // Отступ между графиками по горизонтали
+            runSpacing: 16, // Отступ между графиками по вертикали
+            children: state.chartData.map((chartData) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: MainColors.neutral010,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width:  840 - 32 - 16,
+                        height: 256 - 32 - 16, // Оригинальная высота графика
+                        child: LineChart(
+                          LineChartData(
+                            titlesData: FlTitlesData(
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                ),
                               ),
-                            );
-                          },
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                ),
+                              ),
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 32,
+                                  getTitlesWidget: (value, meta) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 4),
+                                      child: Text(
+                                        value.toStringAsFixed(1),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  getTitlesWidget: (value, meta) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Text(value.toStringAsFixed(2)),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            borderData: FlBorderData(show: true),
+                            lineBarsData: chartData.data.map((triangle) {
+                              return LineChartBarData(
+                                spots: triangle.map((p) => FlSpot(p.x, p.y)).toList(),
+                                isCurved: false,
+                                barWidth: 2,
+                                isStrokeCapRound: false,
+                                belowBarData: BarAreaData(show: false),
+                                color: Colors.blue,
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(value.toStringAsFixed(1)),
-                            );
-                          },
+                      const SizedBox(height: 8), // Отступ между графиком и названием
+                      Text(
+                        chartData.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    borderData: FlBorderData(show: true),
-                    lineBarsData: state.triangles.map((triangle) {
-                      return LineChartBarData(
-                        spots:
-                            triangle.map((p) => FlSpot(p.x, p.y)).toList(),
-                        isCurved: false,
-                        // Должны быть прямые линии!
-                        barWidth: 2,
-                        isStrokeCapRound: false,
-                        belowBarData: BarAreaData(show: false),
-                        color: Colors.blue,
-                      );
-                    }).toList(),
+                    ],
                   ),
                 ),
-              ),
-            ),
+              );
+            }).toList(),
           );
         }
         return const Center(child: Text("Нет данных"));

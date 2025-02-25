@@ -8,7 +8,7 @@ class ChartsInitial extends ChartsState {}
 class ChartsLoading extends ChartsState {}
 
 class ChartsCreated extends ChartsState {
-  final List<List<Point>> triangles;
+  final List<ChartData> chartData;
 
-  ChartsCreated(this.triangles);
+  ChartsCreated(this.chartData);
 }

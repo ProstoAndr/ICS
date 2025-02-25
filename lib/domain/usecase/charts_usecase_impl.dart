@@ -3,14 +3,9 @@ import '../../boundary/usecase/charts_usecase.dart';
 
 class ChartsUseCaseImpl implements ChartsUseCase {
   @override
-  Future<List<List<Point>>> buildTriangle(int countTerm) async {
-    List<double> rain = [
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0.6, 0.6, 0, 0, 0.2, 0, 0.1, 0, 0.1, 0.2
-    ];
-
-    double minVal = rain.reduce((a, b) => a < b ? a : b);
-    double maxVal = rain.reduce((a, b) => a > b ? a : b);
+  Future<List<List<Point>>> buildTriangle(List<double> data, int countTerm) async {
+    double minVal = data.reduce((a, b) => a < b ? a : b);
+    double maxVal = data.reduce((a, b) => a > b ? a : b);
 
     double step = (maxVal - minVal) / (countTerm - 1);
 
