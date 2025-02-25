@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:gap/gap.dart';
-import 'package:ics/theme/MainColors.dart';
+import 'package:ics/theme/main_colors.dart';
 
 import 'dashed_border_painter.dart';
 
@@ -45,7 +45,6 @@ class _ExcelUploaderWidgetState extends State<ExcelUploaderWidget> {
           Stack(
             alignment: Alignment.center,
             children: [
-              // DropZone с пунктирной границей
               CustomPaint(
                 painter: DashedBorderPainter(borderRadius: 8),
                 child: Container(
@@ -62,8 +61,7 @@ class _ExcelUploaderWidgetState extends State<ExcelUploaderWidget> {
                     onHover: () => setState(() => isDragging = true),
                     onLeave: () => setState(() => isDragging = false),
                     onDrop: (dynamic file) async {
-                      final String name =
-                          await dropzoneController!.getFilename(file);
+                      final name = await dropzoneController!.getFilename(file);
                       setState(() {
                         fileName = name;
                         isDragging = false;
@@ -72,44 +70,57 @@ class _ExcelUploaderWidgetState extends State<ExcelUploaderWidget> {
                   ),
                 ),
               ),
-
-              // Иконка загрузки и текст
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.cloud_upload_outlined,
-                      size: 40, color: Colors.grey),
+                  Icon(
+                    Icons.cloud_upload_outlined,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
                   SizedBox(height: 5),
-                  Text("Переместите файл сюда или\nнажмите для загрузки",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey)),
-                  SizedBox(height: 5),
-                  Text("Формат: .XLSX, .XLS. Максимальный размер — 100 МБ",
-                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(
+                    "Переместите файл сюда или\nнажмите для загрузки",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Gap(5),
+                  Text(
+                    "Формат: .XLSX, .XLS. Максимальный размер — 100 МБ",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
                 ],
               ),
-
-              // Кнопка загрузки файла
               Positioned.fill(
                 child: GestureDetector(
                   onTap: pickFile,
                   child: Container(color: Colors.transparent),
                 ),
               ),
-
-              // Отображение загруженного файла
               if (fileName != null)
                 Positioned(
                   right: 15,
                   top: 15,
                   child: Column(
                     children: [
-                      const Icon(Icons.insert_drive_file,
-                          size: 40, color: Colors.amber),
+                      const Icon(
+                        Icons.insert_drive_file,
+                        size: 40,
+                        color: Colors.amber,
+                      ),
                       const SizedBox(height: 5),
-                      Text(fileName!,
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.black54)),
+                      Text(
+                        fileName!,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
                     ],
                   ),
                 ),

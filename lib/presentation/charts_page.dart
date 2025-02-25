@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:ics/presentation/widgets/created_charts.dart';
 import 'package:ics/presentation/widgets/init_page.dart';
-import 'package:ics/theme/MainColors.dart';
+import 'package:ics/theme/main_colors.dart';
 
 import 'cubit/charts_cubit.dart';
 

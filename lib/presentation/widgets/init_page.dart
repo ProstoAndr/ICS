@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:ics/theme/MainColors.dart';
+import 'package:ics/theme/main_colors.dart';
 
 import '../cubit/charts_cubit.dart';
 import 'excel_file_uploader.dart';
@@ -21,7 +21,7 @@ class _InitPageState extends State<InitPage> {
     "Парабола"
   ];
 
-  String selectedChart = "Треугольный"; // Выбранный тип графика
+  String selectedChart = "Треугольный";
   final TextEditingController termController = TextEditingController(text: "3");
 
   @override
@@ -40,11 +40,8 @@ class _InitPageState extends State<InitPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Виджет загрузки файла
                 const Expanded(child: ExcelUploaderWidget()),
                 const Gap(32),
-
-                // Виджет выбора графика и ввода термов
                 SizedBox(
                   width: 560,
                   child: Column(
@@ -52,7 +49,10 @@ class _InitPageState extends State<InitPage> {
                     children: [
                       const Text(
                         "Выберите тип графика",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const Gap(16),
 
@@ -68,8 +68,8 @@ class _InitPageState extends State<InitPage> {
                                 selectedChart = value!;
                               });
                             },
-                            contentPadding: EdgeInsets.zero, // Убирает внутренние отступы
-                            visualDensity: VisualDensity.compact, // Делает RadioListTile более компактным
+                            contentPadding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
                           );
                         }).toList(),
                       ),
@@ -79,7 +79,7 @@ class _InitPageState extends State<InitPage> {
                       TextField(
                         controller: termController,
                         keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: "Введите число",
                         ),
@@ -96,14 +96,14 @@ class _InitPageState extends State<InitPage> {
                   final termCount = int.tryParse(termController.text);
                   if (termCount == null || termCount <= 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Введите корректное число термов")),
+                      const SnackBar(
+                        content: Text("Введите корректное число термов"),
+                      ),
                     );
                     return;
                   }
-                  // Получаем индекс графика
                   final chartIndex = chartTypes.indexOf(selectedChart);
                   cubit.buildCharts(chartIndex, termCount);
-                  //cubit.buildCharts(0, 3);
                 },
                 child: const Text('Построить графики'),
               ),

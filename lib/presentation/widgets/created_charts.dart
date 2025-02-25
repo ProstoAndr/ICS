@@ -1,8 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:ics/presentation/cubit/charts_cubit.dart';
-import 'package:ics/theme/MainColors.dart';
+import 'package:ics/theme/main_colors.dart';
 
 class CreatedCharts extends StatelessWidget {
   const CreatedCharts({super.key});
@@ -13,8 +14,8 @@ class CreatedCharts extends StatelessWidget {
       builder: (context, state) {
         if (state is ChartsCreated) {
           return Wrap(
-            spacing: 16, // Отступ между графиками по горизонтали
-            runSpacing: 16, // Отступ между графиками по вертикали
+            spacing: 16,
+            runSpacing: 16,
             children: state.chartData.map((chartData) {
               return Container(
                 decoration: BoxDecoration(
@@ -29,16 +30,16 @@ class CreatedCharts extends StatelessWidget {
                     children: [
                       SizedBox(
                         width:  840 - 32 - 16,
-                        height: 256 - 32 - 16, // Оригинальная высота графика
+                        height: 256 - 32 - 16,
                         child: LineChart(
                           LineChartData(
                             titlesData: FlTitlesData(
-                              topTitles: AxisTitles(
+                              topTitles: const AxisTitles(
                                 sideTitles: SideTitles(
                                   showTitles: false,
                                 ),
                               ),
-                              rightTitles: AxisTitles(
+                              rightTitles: const AxisTitles(
                                 sideTitles: SideTitles(
                                   showTitles: false,
                                 ),
@@ -83,7 +84,7 @@ class CreatedCharts extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8), // Отступ между графиком и названием
+                      const Gap(8),
                       Text(
                         chartData.name,
                         style: const TextStyle(
