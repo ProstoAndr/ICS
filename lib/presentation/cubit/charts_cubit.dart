@@ -13,8 +13,26 @@ class ChartsCubit extends Cubit<ChartsState> {
 
   void buildCharts(int numberChart, int countTerm) async {
     emit(ChartsLoading());
-    final triangles = await chartsUseCase.buildTriangle(countTerm);
-    emit(ChartsCreated(triangles));
+    List<List<Point>> chartData;
+    switch (numberChart) {
+      case 0: // Треугольный
+        chartData = await chartsUseCase.buildTriangle(countTerm);
+        emit(ChartsCreated(chartData));
+        break;
+      case 1: // Трапециевидный
+      //chartData = await chartsUseCase.buildTrapezoidal(countTerm);
+        break;
+      case 2: // Гауссов
+      //chartData = await chartsUseCase.buildGaussian(countTerm);
+        break;
+      case 3: // Парабола
+      //chartData = await chartsUseCase.buildParabolic(countTerm);
+        break;
+      default:
+      //emit(ChartsError("Неизвестный тип графика"));
+        return;
+    }
+
   }
 
   void back() {
