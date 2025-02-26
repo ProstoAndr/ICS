@@ -29,7 +29,7 @@ class CreatedCharts extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width:  840 - 32 - 16,
+                        width: 840 - 32 - 16,
                         height: 256 - 32 - 16,
                         child: LineChart(
                           LineChartData(
@@ -73,12 +73,15 @@ class CreatedCharts extends StatelessWidget {
                             borderData: FlBorderData(show: true),
                             lineBarsData: chartData.data.map((triangle) {
                               return LineChartBarData(
-                                spots: triangle.map((p) => FlSpot(p.x, p.y)).toList(),
+                                spots: triangle
+                                    .map((p) => FlSpot(p.x, p.y))
+                                    .toList(),
                                 isCurved: false,
                                 barWidth: 2,
-                                isStrokeCapRound: false,
+                                isStrokeCapRound: true,
                                 belowBarData: BarAreaData(show: false),
                                 color: Colors.blue,
+                                dotData: const FlDotData(show: false),
                               );
                             }).toList(),
                           ),

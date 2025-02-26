@@ -26,25 +26,30 @@ class ChartsCubit extends Cubit<ChartsState> {
     switch (numberChart) {
       case 0: // Треугольный
         for (final plenty in plenties) {
-          final triangles = await chartsUseCase.buildTriangle(plenty.data, countTerm);
+          final triangles =
+              await chartsUseCase.buildTriangle(plenty.data, countTerm);
           allCharts.add(ChartData(plenty.name, triangles));
         }
         emit(ChartsCreated(allCharts));
         break;
       case 1: // Трапециевидный
-      //chartData = await chartsUseCase.buildTrapezoidal(countTerm);
+        //chartData = await chartsUseCase.buildTrapezoidal(countTerm);
         break;
       case 2: // Гауссов
-      //chartData = await chartsUseCase.buildGaussian(countTerm);
+        //chartData = await chartsUseCase.buildGaussian(countTerm);
         break;
       case 3: // Парабола
-      //chartData = await chartsUseCase.buildParabolic(countTerm);
+        for (final plenty in plenties) {
+          final parabolas =
+              await chartsUseCase.buildParabolic(plenty.data, countTerm);
+          allCharts.add(ChartData(plenty.name, parabolas));
+        }
+        emit(ChartsCreated(allCharts));
         break;
       default:
-      //emit(ChartsError("Неизвестный тип графика"));
+        //emit(ChartsError("Неизвестный тип графика"));
         return;
     }
-
   }
 
   void back() {
@@ -55,5 +60,6 @@ class ChartsCubit extends Cubit<ChartsState> {
 class ChartData {
   final String name;
   final List<List<Point>> data;
+
   ChartData(this.name, this.data);
 }
