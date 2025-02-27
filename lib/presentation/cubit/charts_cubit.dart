@@ -33,10 +33,20 @@ class ChartsCubit extends Cubit<ChartsState> {
         emit(ChartsCreated(allCharts));
         break;
       case 1: // Трапециевидный
-        //chartData = await chartsUseCase.buildTrapezoidal(countTerm);
+        for (final plenty in plenties) {
+          final trapeziodal =
+              await chartsUseCase.buildTrapezoidal(plenty.data, countTerm);
+          allCharts.add(ChartData(plenty.name, trapeziodal));
+        }
+        emit(ChartsCreated(allCharts));
         break;
       case 2: // Гауссов
-        //chartData = await chartsUseCase.buildGaussian(countTerm);
+        for (final plenty in plenties) {
+          final gaussian =
+              await chartsUseCase.buildGaussian(plenty.data, countTerm);
+          allCharts.add(ChartData(plenty.name, gaussian));
+        }
+        emit(ChartsCreated(allCharts));
         break;
       case 3: // Парабола
         for (final plenty in plenties) {
