@@ -1,9 +1,11 @@
 import 'package:ics/domain/entity/point.dart';
 import '../../boundary/usecase/charts_usecase.dart';
+import 'dart:math';
 
 class ChartsUseCaseImpl implements ChartsUseCase {
   @override
-  Future<List<List<Point>>> buildTriangle(List<double> data, int countTerm) async {
+  Future<List<List<Point>>> buildTriangle(
+      List<double> data, int countTerm) async {
     double minVal = data.reduce((a, b) => a < b ? a : b);
     double maxVal = data.reduce((a, b) => a > b ? a : b);
 
@@ -46,7 +48,8 @@ class ChartsUseCaseImpl implements ChartsUseCase {
   }
 
   @override
-  Future<List<List<Point>>> buildParabolic(List<double> data, int countTerm) async {
+  Future<List<List<Point>>> buildParabolic(
+      List<double> data, int countTerm) async {
     double minVal = data.reduce((a, b) => a < b ? a : b);
     double maxVal = data.reduce((a, b) => a > b ? a : b);
 
@@ -78,5 +81,85 @@ class ChartsUseCaseImpl implements ChartsUseCase {
     }
 
     return allParabolas;
+  }
+
+  @override
+  Future<List<List<Point>>> buildTrapezoidal(
+      List<double> data, int countTerm) async {
+    double minVal = data.reduce((a, b) => a < b ? a : b);
+    double maxVal = data.reduce((a, b) => a > b ? a : b);
+
+    double step = (maxVal - minVal) / (countTerm - 1);
+    double baseWidth = step * 0.5; // Ширина горизонтального верха трапеции
+
+    List<List<Point>> allTrapezoids = [];
+
+    for (int i = 0; i < countTerm; i++) {
+      double bX = minVal + i * step; // Центр трапеции
+      double aX = bX - step;
+      double dX = bX + step;
+      //double cX = bX - baseWidth;
+      //double eX = bX + baseWidth;
+      double cX = max(minVal, bX - baseWidth);
+      double eX = min(maxVal, bX + baseWidth);
+
+      List<Point> trapezoid = [];
+
+      if (i == 0) {
+        // Первый термин без левого края
+        trapezoid = [
+          Point(x: cX, y: 1),
+          Point(x: eX, y: 1),
+          Point(x: dX, y: 0),
+        ];
+      } else if (i == countTerm - 1) {
+        // Последний термин без правого края
+        trapezoid = [
+          Point(x: aX, y: 0),
+          Point(x: cX, y: 1),
+          Point(x: eX, y: 1),
+        ];
+      } else {
+        // Обычные трапеции
+        trapezoid = [
+          Point(x: aX, y: 0),
+          Point(x: cX, y: 1),
+          Point(x: eX, y: 1),
+          Point(x: dX, y: 0),
+        ];
+      }
+
+      allTrapezoids.add(trapezoid);
+    }
+
+    return allTrapezoids;
+  }
+
+  @override
+  Future<List<List<Point>>> buildGaussian(
+      List<double> data, int countTerm) async {
+    double minVal = data.reduce((a, b) => a < b ? a : b);
+    double maxVal = data.reduce((a, b) => a > b ? a : b);
+
+    double step = (maxVal - minVal) / (countTerm - 1);
+    double sigma = step / 2; // Стандартное отклонение для гауссианы
+
+    List<List<Point>> allGaussians = [];
+
+    for (int i = 0; i < countTerm; i++) {
+      double bX = minVal + i * step; // Центр гауссианы
+
+      List<Point> gaussian = [];
+      double increment = (maxVal - minVal) / 500; // Малый шаг для плавности
+
+      for (double x = minVal; x <= maxVal; x += increment) {
+        double y = exp(-pow((x - bX) / sigma, 2)); // Формула гауссовой функции
+        gaussian.add(Point(x: x, y: y));
+      }
+
+      allGaussians.add(gaussian);
+    }
+
+    return allGaussians;
   }
 }
