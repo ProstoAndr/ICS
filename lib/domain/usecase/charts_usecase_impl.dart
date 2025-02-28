@@ -94,25 +94,24 @@ class ChartsUseCaseImpl implements ChartsUseCase {
 
     List<List<Point>> allTrapezoids = [];
 
-    for (int i = 0; i < countTerm; i++) {
-      double bX = minVal + i * step; // Центр трапеции
-      double aX = bX - step;
-      double dX = bX + step;
-      //double cX = bX - baseWidth;
-      //double eX = bX + baseWidth;
-      double cX = max(minVal, bX - baseWidth);
-      double eX = min(maxVal, bX + baseWidth);
+    for (int i = 1; i <= countTerm; i++) {
+      double bX = minVal + (i - 1) * step; // Центр трапеции
+
+      double aX = max(minVal, bX - step); //a
+      double cX = max(minVal, bX - baseWidth); //b
+      double eX = min(maxVal, bX + baseWidth); //c
+      double dX = min(maxVal, bX + step); //d
 
       List<Point> trapezoid = [];
 
-      if (i == 0) {
+      if (i == 1) {
         // Первый термин без левого края
         trapezoid = [
           Point(x: cX, y: 1),
           Point(x: eX, y: 1),
           Point(x: dX, y: 0),
         ];
-      } else if (i == countTerm - 1) {
+      } else if (i == countTerm) {
         // Последний термин без правого края
         trapezoid = [
           Point(x: aX, y: 0),
@@ -146,14 +145,14 @@ class ChartsUseCaseImpl implements ChartsUseCase {
 
     List<List<Point>> allGaussians = [];
 
-    for (int i = 0; i < countTerm; i++) {
-      double bX = minVal + i * step; // Центр гауссианы
+    for (int i = 1; i <= countTerm; i++) {
+      double bX = minVal + (i-1) * step; // Центр гауссианы
 
       List<Point> gaussian = [];
       double increment = (maxVal - minVal) / 500; // Малый шаг для плавности
 
       for (double x = minVal; x <= maxVal; x += increment) {
-        double y = exp(-pow((x - bX) / sigma, 2)); // Формула гауссовой функции
+        double y = exp(-((x - bX) * (x - bX)) / (2 * sigma * sigma)); // Формула гауссовой функции
         gaussian.add(Point(x: x, y: y));
       }
 
