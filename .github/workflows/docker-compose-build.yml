@@ -3,10 +3,10 @@ name: Build and Publish Docker Image to GHCR
 on:
   push:
     branches:
-      - main  # Запуск при пуше в main
+      - develop
   pull_request:
     branches:
-      - main  # Проверка при Pull Request в main
+      - develop
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
         run: docker-compose build
 
   publish:
-    needs: build  # Выполнится после успешной сборки
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: 🛎️ Checkout репозитория
