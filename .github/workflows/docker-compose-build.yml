@@ -3,10 +3,10 @@ name: Docker Compose Build Test
 on:
   push:
     branches:
-      - actions
+      - develop
   pull_request:
     branches:
-      - actions
+      - develop
 
 jobs:
   build:
