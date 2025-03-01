@@ -1,0 +1,28 @@
+name: Docker Compose Build Test
+
+on:
+  push:
+    branches:
+      - actions
+  pull_request:
+    branches:
+      - actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎️ Checkout репозиторий
+        uses: actions/checkout@v4
+
+      - name: 🐳 Установка Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: 🔍 Проверка docker-compose.yml
+        run: docker-compose config
+
+      - name: 🚀 Сборка Docker Compose
+        run: docker-compose build
