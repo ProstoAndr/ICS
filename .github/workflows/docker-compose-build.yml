@@ -38,12 +38,12 @@ jobs:
 
       - name: 🏗️ Сборка и тегирование Docker-образа
         run: |
-          IMAGE_NAME=ghcr.io/$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')/ics
+          IMAGE_NAME=ghcr.io/$(echo "prostoandr/ics
           docker build -t $IMAGE_NAME:latest .
           docker tag $IMAGE_NAME:latest $IMAGE_NAME:${{ github.sha }}
 
       - name: 🚀 Публикация в GHCR
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/ics
+          IMAGE_NAME=ghcr.io/$prostoandr/ics
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:${{ github.sha }}
