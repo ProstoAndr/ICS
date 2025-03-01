@@ -44,6 +44,6 @@ jobs:
 
       - name: 🚀 Публикация в GHCR
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/ICS
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/ics
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:${{ github.sha }}
