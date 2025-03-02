@@ -45,6 +45,7 @@ jobs:
       - name: 🏗️ Сборка и публикация Docker-образа
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
