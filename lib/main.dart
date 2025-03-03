@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import 'init/app_router_init.dart';
 
 void main() {
-  runApp(const MyApp());
+  final appRouter = AppRouterInit();
+  runApp(MyApp(appRouter: appRouter));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AppRouterInit appRouter;
+  const MyApp({super.key, required this.appRouter});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routerDelegate: AppRouterInit().router.routerDelegate,
-      routeInformationParser: AppRouterInit().router.routeInformationParser,
-      routeInformationProvider: AppRouterInit().router.routeInformationProvider,
+      routerConfig: appRouter.router,
     );
   }
 }

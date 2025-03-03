@@ -51,7 +51,7 @@ class MembershipTables extends StatelessWidget {
                     ...points.map((p) => TableRow(
                       children: [
                         _buildTableCell(p.x.toStringAsFixed(2)),
-                        _buildTableCell((p.y * 100).toStringAsFixed(1) + "%"),
+                        _buildTableCell("${(p.y * 100).toStringAsFixed(1)}%"),
                       ],
                     )),
                   ],

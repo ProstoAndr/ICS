@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import '../../boundary/usecase/membership_usecase.dart';
-import '../../domain/entity/point.dart';
+import '../entity/point.dart';
 import '../../boundary/usecase/charts_usecase.dart';
 
 class MembershipUseCaseImpl implements MembershipUseCase {

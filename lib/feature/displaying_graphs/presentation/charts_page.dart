@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:ics/presentation/widgets/created_charts.dart';
-import 'package:ics/presentation/widgets/init_page.dart';
 import 'package:ics/theme/main_colors.dart';
+import 'package:ics/utils/browser_helper.dart';
 
 import 'cubit/charts_cubit.dart';
+import 'widgets/created_charts.dart';
 
 class ChartsPage extends StatefulWidget {
-  const ChartsPage({super.key});
+  final int chartIndex;
+  final int termCount;
+
+  const ChartsPage({
+    super.key,
+    required this.chartIndex,
+    required this.termCount,
+  });
 
   @override
   State<ChartsPage> createState() => _ChartsPageState();
@@ -18,6 +25,13 @@ class _ChartsPageState extends State<ChartsPage> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+    final cubit = BlocProvider.of<ChartsCubit>(context);
+    cubit.buildCharts(widget.chartIndex, widget.termCount);
+  }
+
+  @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
@@ -25,7 +39,6 @@ class _ChartsPageState extends State<ChartsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = BlocProvider.of<ChartsCubit>(context);
     return Scaffold(
       backgroundColor: MainColors.neutral030,
       appBar: AppBar(
@@ -43,9 +56,6 @@ class _ChartsPageState extends State<ChartsPage> {
               constraints: const BoxConstraints(maxWidth: 1680),
               child: BlocBuilder<ChartsCubit, ChartsState>(
                 builder: (context, state) {
-                  if (state is ChartsInitial) {
-                    return const InitPage();
-                  }
                   if (state is ChartsLoading) {
                     return const Center(
                       child: CircularProgressIndicator(),
@@ -57,7 +67,8 @@ class _ChartsPageState extends State<ChartsPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            cubit.back();
+                            browserHistoryBack();
+                            blockBrowserBackButton();
                           },
                           child: const Text('Назад'),
                         ),
