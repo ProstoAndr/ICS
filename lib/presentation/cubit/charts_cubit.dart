@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../boundary/usecase/charts_usecase.dart';
+import '../../boundary/usecase/membership_usecase.dart';
 import '../../domain/entity/plenty.dart';
 import '../../domain/entity/point.dart';
 
@@ -9,8 +10,12 @@ part 'charts_state.dart';
 
 class ChartsCubit extends Cubit<ChartsState> {
   final ChartsUseCase chartsUseCase;
+  final MembershipUseCase membershipUseCase;
 
-  ChartsCubit({required this.chartsUseCase}) : super(ChartsInitial());
+  ChartsCubit({
+    required this.chartsUseCase,
+    required this.membershipUseCase,
+  }) : super(ChartsInitial());
 
   final List<Plenty> plenties = [
     Plenty(name: "Rain", data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6, 0.6, 0, 0, 0.2, 0, 0.1, 0, 0.1, 0.2]),
@@ -28,6 +33,12 @@ class ChartsCubit extends Cubit<ChartsState> {
         for (final plenty in plenties) {
           final triangles =
               await chartsUseCase.buildTriangle(plenty.data, countTerm);
+          final points =
+              await membershipUseCase.triangles(plenty.data, countTerm);
+          print('${plenty.name}:');
+          for (int i = 0; i < points.length; i++) {
+            print('x: ${points[i].x}; y: ${points[i].y};');
+          }
           allCharts.add(ChartData(plenty.name, triangles));
         }
         emit(ChartsCreated(allCharts));
@@ -36,6 +47,11 @@ class ChartsCubit extends Cubit<ChartsState> {
         for (final plenty in plenties) {
           final trapeziodal =
               await chartsUseCase.buildTrapezoidal(plenty.data, countTerm);
+          final points =
+              await membershipUseCase.trapezoids(plenty.data, countTerm);
+          for (int i = 0; i < points.length; i++) {
+            print('x: ${points[i].x}; y: ${points[i].y};');
+          }
           allCharts.add(ChartData(plenty.name, trapeziodal));
         }
         emit(ChartsCreated(allCharts));
@@ -44,6 +60,11 @@ class ChartsCubit extends Cubit<ChartsState> {
         for (final plenty in plenties) {
           final gaussian =
               await chartsUseCase.buildGaussian(plenty.data, countTerm);
+          final points =
+              await membershipUseCase.gaussians(plenty.data, countTerm);
+          for (int i = 0; i < points.length; i++) {
+            print('x: ${points[i].x}; y: ${points[i].y};');
+          }
           allCharts.add(ChartData(plenty.name, gaussian));
         }
         emit(ChartsCreated(allCharts));
@@ -52,6 +73,11 @@ class ChartsCubit extends Cubit<ChartsState> {
         for (final plenty in plenties) {
           final parabolas =
               await chartsUseCase.buildParabolic(plenty.data, countTerm);
+          final points =
+              await membershipUseCase.parabolas(plenty.data, countTerm);
+          for (int i = 0; i < points.length; i++) {
+            print('x: ${points[i].x}; y: ${points[i].y};');
+          }
           allCharts.add(ChartData(plenty.name, parabolas));
         }
         emit(ChartsCreated(allCharts));
