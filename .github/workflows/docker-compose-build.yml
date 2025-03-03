@@ -1,0 +1,31 @@
+name: Build and Publish Docker Image to GHCR
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: prostoandr/ics
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout репозитория
+        uses: actions/checkout@v4
+
+      - name: 🐳 Установка Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: 🔍 Проверка docker-compose.yml
+        run: docker-compose config
+
+      - name: 🏗️ Сборка Docker-образов
+        run: docker-compose build
