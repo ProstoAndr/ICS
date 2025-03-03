@@ -28,64 +28,35 @@ class ChartsCubit extends Cubit<ChartsState> {
     emit(ChartsLoading());
 
     List<ChartData> allCharts = [];
-    switch (numberChart) {
-      case 0: // Треугольный
-        for (final plenty in plenties) {
-          final triangles =
-              await chartsUseCase.buildTriangle(plenty.data, countTerm);
-          final points =
-              await membershipUseCase.triangles(plenty.data, countTerm);
-          print('${plenty.name}:');
-          for (int i = 0; i < points.length; i++) {
-            print('x: ${points[i].x}; y: ${points[i].y};');
-          }
-          allCharts.add(ChartData(plenty.name, triangles));
-        }
-        emit(ChartsCreated(allCharts));
-        break;
-      case 1: // Трапециевидный
-        for (final plenty in plenties) {
-          final trapeziodal =
-              await chartsUseCase.buildTrapezoidal(plenty.data, countTerm);
-          final points =
-              await membershipUseCase.trapezoids(plenty.data, countTerm);
-          for (int i = 0; i < points.length; i++) {
-            print('x: ${points[i].x}; y: ${points[i].y};');
-          }
-          allCharts.add(ChartData(plenty.name, trapeziodal));
-        }
-        emit(ChartsCreated(allCharts));
-        break;
-      case 2: // Гауссов
-        for (final plenty in plenties) {
-          final gaussian =
-              await chartsUseCase.buildGaussian(plenty.data, countTerm);
-          final points =
-              await membershipUseCase.gaussians(plenty.data, countTerm);
-          for (int i = 0; i < points.length; i++) {
-            print('x: ${points[i].x}; y: ${points[i].y};');
-          }
-          allCharts.add(ChartData(plenty.name, gaussian));
-        }
-        emit(ChartsCreated(allCharts));
-        break;
-      case 3: // Парабола
-        for (final plenty in plenties) {
-          final parabolas =
-              await chartsUseCase.buildParabolic(plenty.data, countTerm);
-          final points =
-              await membershipUseCase.parabolas(plenty.data, countTerm);
-          for (int i = 0; i < points.length; i++) {
-            print('x: ${points[i].x}; y: ${points[i].y};');
-          }
-          allCharts.add(ChartData(plenty.name, parabolas));
-        }
-        emit(ChartsCreated(allCharts));
-        break;
-      default:
-        //emit(ChartsError("Неизвестный тип графика"));
-        return;
+    for (final plenty in plenties) {
+      List<List<Point>> graphData;
+      List<List<Point>> membershipData;
+
+      switch (numberChart) {
+        case 0:
+          graphData = await chartsUseCase.buildTriangle(plenty.data, countTerm);
+          membershipData = await membershipUseCase.triangles(plenty.data, countTerm);
+          break;
+        case 1:
+          graphData = await chartsUseCase.buildTrapezoidal(plenty.data, countTerm);
+          membershipData = await membershipUseCase.trapezoids(plenty.data, countTerm);
+          break;
+        case 2:
+          graphData = await chartsUseCase.buildGaussian(plenty.data, countTerm);
+          membershipData = await membershipUseCase.gaussians(plenty.data, countTerm);
+          break;
+        case 3:
+          graphData = await chartsUseCase.buildParabolic(plenty.data, countTerm);
+          membershipData = await membershipUseCase.parabolas(plenty.data, countTerm);
+          break;
+        default:
+          return;
+      }
+
+      allCharts.add(ChartData(plenty.name, graphData, membershipData));
     }
+
+    emit(ChartsCreated(allCharts));
   }
 
   void back() {
@@ -96,6 +67,7 @@ class ChartsCubit extends Cubit<ChartsState> {
 class ChartData {
   final String name;
   final List<List<Point>> data;
+  final List<List<Point>> membershipData;
 
-  ChartData(this.name, this.data);
+  ChartData(this.name, this.data, this.membershipData);
 }

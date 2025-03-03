@@ -10,123 +10,115 @@ class MembershipUseCaseImpl implements MembershipUseCase {
   MembershipUseCaseImpl({required this.chartsUseCase});
 
   @override
-  Future<List<Point>> gaussians(List<double> data, int countTerm) async {
+  Future<List<List<Point>>> gaussians(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = data.reduce((a, b) => a < b ? a : b);
-    double maxVal = data.reduce((a, b) => a > b ? a : b);
+    double minVal = data.reduce(min);
+    double maxVal = data.reduce(max);
     double step = (maxVal - minVal) / (countTerm - 1);
-    double sigma = step / 2; // Отклонение Гаусса (чтобы функции плавно перекрывались)
+    double sigma = step / 2; // Разброс
 
-    List<Point> points = [];
+    List<List<Point>> allMemberships = [];
 
     for (int i = 0; i < countTerm; i++) {
-      double bX = minVal + i * step; // Центр гауссовой функции
+      double bX = minVal + i * step;
+      List<Point> termPoints = [];
 
       for (double x in data) {
-        // Гауссова функция: exp(- (x - bX)^2 / (2 * sigma^2))
         double membership = exp(-pow((x - bX), 2) / (2 * pow(sigma, 2)));
-
-        points.add(Point(x: x, y: membership));
+        termPoints.add(Point(x: x, y: membership));
       }
+
+      allMemberships.add(termPoints);
     }
 
-    return points;
+    return allMemberships;
   }
 
   @override
-  Future<List<Point>> parabolas(List<double> data, int countTerm) async {
+  Future<List<List<Point>>> parabolas(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = data.reduce((a, b) => a < b ? a : b);
-    double maxVal = data.reduce((a, b) => a > b ? a : b);
+    double minVal = data.reduce(min);
+    double maxVal = data.reduce(max);
     double step = (maxVal - minVal) / (countTerm - 1);
 
-    List<Point> points = [];
+    List<List<Point>> allMemberships = [];
 
     for (int i = 0; i < countTerm; i++) {
-      double bX = minVal + i * step; // Центр параболы
+      double bX = minVal + i * step;
       double aX = bX - step;
       double cX = bX + step;
+      List<Point> termPoints = [];
 
       for (double x in data) {
-        if (x < aX || x > cX) continue; // Пропускаем точки вне диапазона
-
-        // Вычисление значения по параболической функции (нормализованная)
+        if (x < aX || x > cX) continue;
         double membership = 1 - ((x - bX) * (x - bX)) / (step * step);
-        membership = membership < 0 ? 0 : membership; // Ограничение значений снизу
-
-        points.add(Point(x: x, y: membership));
+        termPoints.add(Point(x: x, y: max(0, membership)));
       }
+
+      allMemberships.add(termPoints);
     }
 
-    return points;
+    return allMemberships;
   }
 
   @override
-  Future<List<Point>> trapezoids(List<double> data, int countTerm) async {
+  Future<List<List<Point>>> trapezoids(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = data.reduce((a, b) => a < b ? a : b);
-    double maxVal = data.reduce((a, b) => a > b ? a : b);
+    double minVal = data.reduce(min);
+    double maxVal = data.reduce(max);
     double step = (maxVal - minVal) / (countTerm - 1);
 
-    List<Point> points = [];
+    List<List<Point>> allMemberships = [];
 
     for (int i = 0; i < countTerm; i++) {
-      double bX = minVal + i * step; // Центр трапеции
-      double aX = bX - step;         // Левая граница
-      double dX = bX + step;         // Правая граница
-      double cX = bX + step / 2;     // Верхняя правая граница
+      double bX = minVal + i * step;
+      double aX = bX - step;
+      double dX = bX + step;
+      double cX = bX + step / 2;
+      List<Point> termPoints = [];
 
       for (double x in data) {
-        if (x < aX || x > dX) continue; // Пропускаем точки вне диапазона
-
-        double membership;
-        if (x <= bX) {
-          membership = (x - aX) / (bX - aX);
-        } else if (x <= cX) {
-          membership = 1.0; // Плато трапеции
-        } else {
-          membership = (dX - x) / (dX - cX);
-        }
-
-        points.add(Point(x: x, y: membership));
+        if (x < aX || x > dX) continue;
+        double membership = x <= bX
+            ? (x - aX) / (bX - aX)
+            : (dX - x) / (dX - cX);
+        termPoints.add(Point(x: x, y: membership));
       }
+
+      allMemberships.add(termPoints);
     }
 
-    return points;
+    return allMemberships;
   }
 
   @override
-  Future<List<Point>> triangles(List<double> data, int countTerm) async {
+  Future<List<List<Point>>> triangles(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = data.reduce((a, b) => a < b ? a : b);
-    double maxVal = data.reduce((a, b) => a > b ? a : b);
+    double minVal = data.reduce(min);
+    double maxVal = data.reduce(max);
     double step = (maxVal - minVal) / (countTerm - 1);
 
-    List<Point> points = [];
+    List<List<Point>> allMemberships = [];
 
     for (int i = 0; i < countTerm; i++) {
-      double bX = minVal + i * step; // Центр треугольника
+      double bX = minVal + i * step;
       double aX = bX - step;
       double cX = bX + step;
+      List<Point> termPoints = [];
 
       for (double x in data) {
-        if (x < aX || x > cX) continue; // Пропускаем точки вне диапазона
-
-        double membership;
-        if (x < bX) {
-          membership = (x - aX) / (bX - aX);
-        } else {
-          membership = (cX - x) / (cX - bX);
-        }
-
-        points.add(Point(x: x, y: membership));
+        if (x < aX || x > cX) continue;
+        double membership = x < bX ? (x - aX) / (bX - aX) : (cX - x) / (cX - bX);
+        termPoints.add(Point(x: x, y: membership));
       }
+
+      allMemberships.add(termPoints);
     }
 
-    return points;
+    return allMemberships;
   }
 }
