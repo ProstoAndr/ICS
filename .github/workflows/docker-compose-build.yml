@@ -37,8 +37,12 @@ jobs:
       - name: 🛎️ Checkout репозитория
         uses: actions/checkout@v4
 
-      - name: 🔑 Авторизация в GHCR
-        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: 🔑 Авторизация в GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🏗️ Сборка и публикация Docker-образа
         uses: docker/build-push-action@v5
