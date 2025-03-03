@@ -1,6 +1,7 @@
-import 'package:ics/domain/entity/point.dart';
-import '../../boundary/usecase/charts_usecase.dart';
 import 'dart:math';
+
+import '../../boundary/usecase/charts_usecase.dart';
+import '../entity/point.dart';
 
 class ChartsUseCaseImpl implements ChartsUseCase {
   @override

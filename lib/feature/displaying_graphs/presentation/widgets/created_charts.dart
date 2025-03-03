@@ -2,9 +2,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:ics/presentation/cubit/charts_cubit.dart';
 import 'package:ics/theme/main_colors.dart';
 
+import '../cubit/charts_cubit.dart';
 import 'membership_tables.dart';
 
 class CreatedCharts extends StatelessWidget {
