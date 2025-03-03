@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ics/domain/usecase/membership_usecase_impl.dart';
 
 import 'package:ics/presentation/cubit/charts_cubit.dart';
 
@@ -17,7 +18,12 @@ class AppRouterInit {
             GoRoute(
               path: Routes.charts,
               builder: (context, state) => BlocProvider(
-                create: (_) => ChartsCubit(chartsUseCase: ChartsUseCaseImpl()),
+                create: (_) => ChartsCubit(
+                  chartsUseCase: ChartsUseCaseImpl(),
+                  membershipUseCase: MembershipUseCaseImpl(
+                    chartsUseCase: ChartsUseCaseImpl(),
+                  ),
+                ),
                 child: const ChartsPage(),
               ),
             ),

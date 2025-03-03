@@ -5,6 +5,8 @@ import 'package:gap/gap.dart';
 import 'package:ics/presentation/cubit/charts_cubit.dart';
 import 'package:ics/theme/main_colors.dart';
 
+import 'membership_tables.dart';
+
 class CreatedCharts extends StatelessWidget {
   const CreatedCharts({super.key});
 
@@ -16,8 +18,10 @@ class CreatedCharts extends StatelessWidget {
           return Wrap(
             spacing: 16,
             runSpacing: 16,
+            alignment: WrapAlignment.center,
             children: state.chartData.map((chartData) {
               return Container(
+                width: 840 - 32 - 16,
                 decoration: BoxDecoration(
                   color: MainColors.neutral010,
                   borderRadius: BorderRadius.circular(8),
@@ -28,6 +32,15 @@ class CreatedCharts extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      Text(
+                        chartData.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const Gap(8),
                       SizedBox(
                         width: 840 - 32 - 16,
                         height: 256 - 32 - 16,
@@ -88,13 +101,8 @@ class CreatedCharts extends StatelessWidget {
                         ),
                       ),
                       const Gap(8),
-                      Text(
-                        chartData.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
+                      MembershipTables(
+                        membershipData: chartData.membershipData,
                       ),
                     ],
                   ),
