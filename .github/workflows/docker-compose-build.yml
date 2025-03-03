@@ -8,6 +8,10 @@ on:
     branches:
       - develop
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: prostoandr/ics
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,18 +40,12 @@ jobs:
       - name: 🔑 Авторизация в GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: 🏗️ Сборка и тегирование Docker-образа
-        run: |
-          IMAGE_NAME=ghcr.io/$(echo "prostoandr/ics")
-          docker build -t $IMAGE_NAME:latest .
-          docker tag $IMAGE_NAME:latest $IMAGE_NAME:${{ github.sha }}
-
       - name: 🏗️ Сборка и публикация Docker-образа
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
