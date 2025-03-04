@@ -88,7 +88,7 @@ class _InitPageState extends State<InitPage> {
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: "Введите число",
+                            hintText: "Введите количество термов от 3 до 10",
                           ),
                         ),
                       ],
@@ -101,7 +101,7 @@ class _InitPageState extends State<InitPage> {
                 child: ElevatedButton(
                   onPressed: () {
                     final termCount = int.tryParse(termController.text);
-                    if (termCount == null || termCount <= 0) {
+                    if (termCount == null || termCount <= 2 || termCount >= 11) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Введите корректное число термов"),
