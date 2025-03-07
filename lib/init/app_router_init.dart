@@ -8,6 +8,7 @@ import 'package:ics/feature/created_rulebase/presentation/cubit/rules_cubit.dart
 import 'package:ics/feature/created_rulebase/presentation/rules_page.dart';
 import 'package:ics/feature/displaying_graphs/domain/usecase/charts_usecase_impl.dart';
 import 'package:ics/feature/displaying_graphs/domain/usecase/membership_usecase_impl.dart';
+import 'package:ics/feature/displaying_graphs/domain/usecase/rules_usecase_impl.dart';
 import 'package:ics/feature/displaying_graphs/presentation/charts_page.dart';
 import 'package:ics/feature/displaying_graphs/presentation/cubit/charts_cubit.dart';
 import 'package:ics/feature/uploading_data/domain/entity/chart_params.dart';
@@ -37,6 +38,9 @@ class AppRouterInit {
                     chartsUseCase: ChartsUseCaseImpl(),
                     membershipUseCase: MembershipUseCaseImpl(
                       chartsUseCase: ChartsUseCaseImpl(),
+                    ),
+                    ruleUseCase: RulesUseCaseImpl(
+                      membershipUseCaseUseCase: MembershipUseCaseImpl(chartsUseCase: ChartsUseCaseImpl()),
                     ),
                   ),
                   child: ChartsPage(

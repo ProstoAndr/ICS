@@ -27,6 +27,7 @@ class ChartsCubit extends Cubit<ChartsState> {
      Plenty(name: "Weather Code", data: [0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.02, 0, 0.01, 0.02, 0.02, 0.03, 0.03, 0.01, 0.03, 0.53, 0.53, 0.03, 0.03, 0.51, 0.03, 0.51, 0.01, 0.51, 0.51])
   ];
 
+
   String nameMethod = '';
   RuleParams? ruleParams;
 
