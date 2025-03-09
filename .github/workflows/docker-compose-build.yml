@@ -43,9 +43,14 @@ jobs:
       - name: 🚀 Деплой на сервер
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+            sudo usermod -aG docker $USER
+            sudo systemctl restart docker
             cd ~/deploy/icsporject
             git pull origin develop
-            docker-compose pull
-            docker-compose up -d --build
+            export DOCKER_HOST=unix:///var/run/docker.sock
+            docker compose pull
+            docker compose up -d --build
             docker system prune -af
           EOF
