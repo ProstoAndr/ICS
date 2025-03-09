@@ -29,3 +29,24 @@ jobs:
 
       - name: 🏗️ Сборка Docker-образов
         run: docker-compose build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 📂 Настройка SSH-доступа
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: 🚀 Деплой на сервер
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            cd ~/deploy/icsporject
+            git pull origin develop
+            docker-compose pull
+            docker-compose up -d --build
+            docker system prune -af
+          EOF
