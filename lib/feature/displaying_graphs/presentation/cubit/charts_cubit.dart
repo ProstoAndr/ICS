@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entity/rule.dart';
+import 'package:ics/feature/created_rulebase/domain/enity/rule_params.dart';
+import 'package:ics/feature/created_rulebase/domain/enity/rules_data.dart';
+
+import '../../domain/entity/chart_data.dart';
 import '../../boundary/usecase/charts_usecase.dart';
 import '../../boundary/usecase/membership_usecase.dart';
-import '../../boundary/usecase/rules_usecase.dart';
 import '../../domain/entity/plenty.dart';
 import '../../domain/entity/point.dart';
 
@@ -12,12 +14,10 @@ part 'charts_state.dart';
 class ChartsCubit extends Cubit<ChartsState> {
   final ChartsUseCase chartsUseCase;
   final MembershipUseCase membershipUseCase;
-  final RulesUseCase ruleUseCase;
 
   ChartsCubit({
     required this.chartsUseCase,
     required this.membershipUseCase,
-    required this.ruleUseCase,
   }) : super(ChartsInitial());
 
    final List<Plenty> plenties = [
@@ -27,11 +27,12 @@ class ChartsCubit extends Cubit<ChartsState> {
      Plenty(name: "Weather Code", data: [0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.02, 0, 0.01, 0.02, 0.02, 0.03, 0.03, 0.01, 0.03, 0.53, 0.53, 0.03, 0.03, 0.51, 0.03, 0.51, 0.01, 0.51, 0.51])
   ];
 
+  String nameMethod = '';
+  RuleParams? ruleParams;
 
   void buildCharts(int numberChart, int countTerm) async {
     emit(ChartsLoading());
 
-    List<List<Point>> membershipData23 = [];
     List<ChartData> allCharts = [];
     for (final plenty in plenties) {
       List<List<Point>> graphData;
@@ -39,54 +40,51 @@ class ChartsCubit extends Cubit<ChartsState> {
 
       switch (numberChart) {
         case 0:
+          nameMethod = 'Треугольный';
           graphData = await chartsUseCase.buildTriangle(plenty.data, countTerm);
-          membershipData = await membershipUseCase.triangles(plenty.data, countTerm);
-          //rules data
+          membershipData =
+              await membershipUseCase.triangles(plenty.data, countTerm);
           break;
         case 1:
-          graphData = await chartsUseCase.buildTrapezoidal(plenty.data, countTerm);
-          membershipData = await membershipUseCase.trapezoids(plenty.data, countTerm);
-          //rules data
+          nameMethod = 'Трапециевидный';
+          graphData =
+              await chartsUseCase.buildTrapezoidal(plenty.data, countTerm);
+          membershipData =
+              await membershipUseCase.trapezoids(plenty.data, countTerm);
           break;
         case 2:
+          nameMethod = 'Гаусса';
           graphData = await chartsUseCase.buildGaussian(plenty.data, countTerm);
-          membershipData = await membershipUseCase.gaussians(plenty.data, countTerm);
-          //rules data
+          membershipData =
+              await membershipUseCase.gaussians(plenty.data, countTerm);
           break;
         case 3:
-          graphData = await chartsUseCase.buildParabolic(plenty.data, countTerm);
-          membershipData = await membershipUseCase.parabolas(plenty.data, countTerm);
-          //rules data
+          nameMethod = 'Парабола';
+          graphData =
+              await chartsUseCase.buildParabolic(plenty.data, countTerm);
+          membershipData =
+              await membershipUseCase.parabolas(plenty.data, countTerm);
           break;
         default:
           return;
       }
 
-
       allCharts.add(ChartData(plenty.name, graphData, membershipData));
-
-      membershipData23.addAll(membershipData);
     }
-    // Генерация правил
-    print(membershipData23);
-    List<Rule> rules = await ruleUseCase.buildrules(3, membershipData23);
 
-    // Выводим сгенерированные правила
-    rules.forEach((rule) {
-      print(rule);
-    });
+    ruleParams = RuleParams(
+      nameMethod: nameMethod,
+      rulesData: RulesData(
+        countTerm: countTerm,
+        countPlenty: plenties.length,
+        allCharts: allCharts,
+      ),
+    );
+
     emit(ChartsCreated(allCharts));
   }
 
-  void back() {
-    emit(ChartsInitial());
+  RuleParams? getParams() {
+    return ruleParams;
   }
-}
-
-class ChartData {
-  final String name;
-  final List<List<Point>> data;
-  final List<List<Point>> membershipData;
-
-  ChartData(this.name, this.data, this.membershipData);
 }
