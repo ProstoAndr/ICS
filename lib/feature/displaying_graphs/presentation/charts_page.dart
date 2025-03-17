@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ics/feature/created_rulebase/domain/enity/rule_params.dart';
+import 'package:ics/feature/created_rulebase/domain/enity/rules_data.dart';
+import 'package:ics/init/app_router_init.dart';
 import 'package:ics/theme/main_colors.dart';
 import 'package:ics/utils/browser_helper.dart';
 
@@ -39,12 +43,25 @@ class _ChartsPageState extends State<ChartsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = BlocProvider.of<ChartsCubit>(context);
     return Scaffold(
       backgroundColor: MainColors.neutral030,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: MainColors.neutral030,
         title: const Text('Отрисовка графов'),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              final params = cubit.getParams();
+              context.go(
+                Routes.rules,
+                extra: params,
+              );
+            },
+            child: const Text('Правила'),
+          ),
+        ],
       ),
       body: Scrollbar(
         controller: _scrollController,
