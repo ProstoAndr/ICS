@@ -18,11 +18,8 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     List<List<double>> yMatrix = [];
     List<double> listX = [];
     List<double> listY = [];
-    print(rulesData.countPlenty);
     for (int i = 0; i < rulesData.countPlenty; i++) {
-      print('$i and ${rulesData.countPlenty}');
       for (int j = 0; j < rulesData.countTerm; j++) {
-        print('i = $i; rulesData.countPlenty = ${rulesData.countPlenty}');
         if (i == rulesData.countPlenty - 1) {
           listY.add(
             await _parametersReverseNormalization(
@@ -32,7 +29,6 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
               xMatrix: xMatrix,
             ),
           );
-          print('listY: $listY');
         } else {
           listX.add(
             await _parametersNormalization(
@@ -42,7 +38,6 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
         }
       }
       if (i == rulesData.countPlenty - 1) {
-        print('Flag');
         yMatrix.add(listY);
       } else {
         xMatrix.add(listX);
@@ -80,7 +75,7 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
       yValues.add(point.y);
     }
     final List<double> listX = [];
-    for (int i = 0; i < countPlenty; i++) {
+    for (int i = 0; i < countPlenty-1; i++) {
       listX.add(xMatrix[i][j]);
     }
     final xMax = listX.reduce(max);
