@@ -8,12 +8,7 @@ import '../enity/rule.dart';
 class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
   @override
   Future<void> ruleBaseGeneration(RulesData rulesData) async {
-    ///Пример правил
-    final rules = [
-      Rule(id: "1", x: [1.0, 2.0], y: 3.0, weight: 4.0),
-      Rule(id: "2", x: [2.0, 3.0], y: 4.0, weight: 5.0),
-    ];
-    // TODO: implement ruleBaseGeneration
+    List<Rule> rules = [];
     List<List<double>> xMatrix = [];
     List<List<double>> yMatrix = [];
     List<double> listX = [];
@@ -40,26 +35,59 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
       if (i == rulesData.countPlenty - 1) {
         yMatrix.add(listY);
       } else {
-        xMatrix.add(listX);
+        xMatrix.add(List.from(listX));
+        listX.clear();
       }
     }
     print('xMatrix: $xMatrix');
     print('yMatrix: $yMatrix');
-    _creatingFile(rules);
+    //_generateCombinations(xMatrix, yMatrix, 0, [], rules);
+    //print('Rules: $rules');
+    //_creatingFile(rules);
+  }
+
+  void _generateCombinations(
+    List<List<double>> xMatrix,
+    List<List<double>> yMatrix,
+    int row,
+    List<double> current,
+    List<Rule> rules,
+  ) {
+    if (row == xMatrix.length) {
+      for (int column = 0; column < yMatrix[0].length; column++) {
+        Random random = new Random();
+        double randomNumber = random.nextDouble();
+        double count = rules.length + 1;
+        final newRule = Rule(
+          id: "$count",
+          x: List.from(current),
+          y: yMatrix[0][column],
+          weight: randomNumber,
+        );
+        rules.add(newRule);
+      }
+      return;
+    }
+
+    for (int col = 0; col < xMatrix[row].length; col++) {
+      current.add(xMatrix[row][col]);
+      _generateCombinations(xMatrix, yMatrix, row + 1, current, rules);
+      current.removeLast();
+    }
   }
 
   Future<void> _creatingFile(List<Rule> rules) async {
-    ///Пример работы с провилами
-    /// Преобразуем список объектов в JSON-строку
     String jsonStr = Rule.toJsonStrList(rules);
-    //print(jsonStr);
-    // TODO: implement _creatingFile
+    print(jsonStr);
+    //File file = File("RuleBase.txt");
+    //await file.writeAsString(jsonStr);
   }
 
   Future<double> _parametersNormalization(List<Point> membershipData) async {
     List<double> yValues = [];
     for (final point in membershipData) {
       yValues.add(point.y);
+      print(point.y);
     }
     return yValues.reduce(min);
   }
@@ -75,7 +103,7 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
       yValues.add(point.y);
     }
     final List<double> listX = [];
-    for (int i = 0; i < countPlenty-1; i++) {
+    for (int i = 0; i < countPlenty - 1; i++) {
       listX.add(xMatrix[i][j]);
     }
     final xMax = listX.reduce(max);
