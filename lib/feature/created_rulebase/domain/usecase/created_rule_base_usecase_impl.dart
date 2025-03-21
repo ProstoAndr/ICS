@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:html' as html;
 import 'dart:math';
 import 'package:ics/feature/created_rulebase/domain/enity/rules_data.dart';
 import 'package:ics/feature/displaying_graphs/domain/entity/point.dart';
@@ -9,39 +11,8 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
   @override
   Future<void> ruleBaseGeneration(RulesData rulesData) async {
     List<Rule> rules = [];
-    List<List<double>> xMatrix = [];
-    List<List<double>> yMatrix = [];
-    List<double> listX = [];
-    List<double> listY = [];
-    for (int i = 0; i < rulesData.countPlenty; i++) {
-      for (int j = 0; j < rulesData.countTerm; j++) {
-        if (i == rulesData.countPlenty - 1) {
-          listY.add(
-            await _parametersReverseNormalization(
-              membershipData: rulesData.allCharts[i].membershipData[j],
-              countPlenty: rulesData.countPlenty,
-              j: j,
-              xMatrix: xMatrix,
-            ),
-          );
-        } else {
-          listX.add(
-            await _parametersNormalization(
-              rulesData.allCharts[i].membershipData[j],
-            ),
-          );
-        }
-      }
-      if (i == rulesData.countPlenty - 1) {
-        yMatrix.add(listY);
-      } else {
-        xMatrix.add(List.from(listX));
-        listX.clear();
-      }
-    }
-    print('xMatrix: $xMatrix');
-    print('yMatrix: $yMatrix');
-    _generateCombinations(xMatrix, yMatrix, 0, [], rules);
+    final unityMatrix = await _createMatrix(rulesData);
+    _generateCombinations(unityMatrix[0], unityMatrix[1], 0, [], rules);
     _creatingFile(rules);
   }
 
@@ -77,9 +48,16 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
 
   Future<void> _creatingFile(List<Rule> rules) async {
     String jsonStr = Rule.toJsonStrList(rules);
-    print(jsonStr);
-    //File file = File("RuleBase.txt");
-    //await file.writeAsString(jsonStr);
+
+    final bytes = utf8.encode(jsonStr);
+    final blob = html.Blob([bytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute("download", "RuleBase.txt")
+      ..click();
+
+    html.Url.revokeObjectUrl(url);
   }
 
   Future<double> _parametersNormalization(List<Point> membershipData) async {
@@ -117,8 +95,91 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     return max(1 - xMax, yMax);
   }
 
-  Future<List<Point>> _singleton(List<List<double>> matrix) async {
-    // TODO: implement _parametersReverseNormalization
-    throw UnimplementedError();
+  Future<List<List<List<double>>>> _createMatrix(RulesData rulesData) async {
+    List<List<double>> xMatrix = [];
+    List<List<double>> yMatrix = [];
+    List<double> listX = [];
+    List<double> listY = [];
+    for (int i = 0; i < rulesData.countPlenty; i++) {
+      for (int j = 0; j < rulesData.countTerm; j++) {
+        if (i == rulesData.countPlenty - 1) {
+          listY.add(
+            await _parametersReverseNormalization(
+              membershipData: rulesData.allCharts[i].membershipData[j],
+              countPlenty: rulesData.countPlenty,
+              j: j,
+              xMatrix: xMatrix,
+            ),
+          );
+        } else {
+          listX.add(
+            await _parametersNormalization(
+              rulesData.allCharts[i].membershipData[j],
+            ),
+          );
+        }
+      }
+      if (i == rulesData.countPlenty - 1) {
+        yMatrix.add(listY);
+      } else {
+        xMatrix.add(List.from(listX));
+        listX.clear();
+      }
+    }
+    final List<List<List<double>>> unityMatrix = [];
+    unityMatrix.add(xMatrix);
+    unityMatrix.add(yMatrix);
+    return unityMatrix;
+  }
+
+  void _generateSingleton(
+    List<List<double>> xMatrix,
+    List<List<double>> yMatrix,
+    int row,
+    List<double> current,
+    double sumNumerator,
+    double sumDenominator,
+  ) {
+    if (row == xMatrix.length) {
+      for (int column = 0; column < yMatrix[0].length; column++) {
+        double multiple = 1;
+        for (var x in current) {
+          multiple *= x;
+        }
+        sumDenominator += multiple;
+        sumNumerator += (multiple * yMatrix[0][column]);
+      }
+      return;
+    }
+
+    for (int col = 0; col < xMatrix[row].length; col++) {
+      current.add(xMatrix[row][col]);
+      _generateSingleton(
+        xMatrix,
+        yMatrix,
+        row + 1,
+        current,
+        sumNumerator,
+        sumDenominator,
+      );
+      current.removeLast();
+    }
+  }
+
+  @override
+  Future<double> singleton(RulesData rulesData) async {
+    final unityMatrix = await _createMatrix(rulesData);
+    double sumNumerator = 0;
+    double sumDenominator = 1;
+    _generateSingleton(
+      unityMatrix[0],
+      unityMatrix[1],
+      0,
+      [],
+      sumNumerator,
+      sumDenominator,
+    );
+    final singleton = sumNumerator / sumDenominator;
+    return singleton;
   }
 }

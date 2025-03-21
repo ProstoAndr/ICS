@@ -19,6 +19,7 @@ class RulesCubit extends Cubit<RulesState> {
       throw UnimplementedError();
     } else {
       await createdRuleBaseUseCase.ruleBaseGeneration(ruleParams.rulesData);
+      await createdRuleBaseUseCase.singleton(ruleParams.rulesData);
     }
   }
 }
