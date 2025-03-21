@@ -14,7 +14,6 @@ class RulesCubit extends Cubit<RulesState> {
   }) : super(RulesInitial());
 
   Future<void> creatingRules(RuleParams? ruleParams) async {
-    print(ruleParams?.nameMethod);
     if (ruleParams == null) {
       throw UnimplementedError();
     } else {
