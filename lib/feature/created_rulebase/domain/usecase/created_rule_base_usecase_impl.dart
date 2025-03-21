@@ -41,9 +41,8 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     }
     print('xMatrix: $xMatrix');
     print('yMatrix: $yMatrix');
-    //_generateCombinations(xMatrix, yMatrix, 0, [], rules);
-    //print('Rules: $rules');
-    //_creatingFile(rules);
+    _generateCombinations(xMatrix, yMatrix, 0, [], rules);
+    _creatingFile(rules);
   }
 
   void _generateCombinations(
@@ -87,7 +86,9 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     List<double> yValues = [];
     for (final point in membershipData) {
       yValues.add(point.y);
-      print(point.y);
+    }
+    if (yValues.isEmpty) {
+      return 0;
     }
     return yValues.reduce(min);
   }
@@ -101,6 +102,9 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     List<double> yValues = [];
     for (final point in membershipData) {
       yValues.add(point.y);
+    }
+    if (yValues.isEmpty) {
+      return 0;
     }
     final List<double> listX = [];
     for (int i = 0; i < countPlenty - 1; i++) {
