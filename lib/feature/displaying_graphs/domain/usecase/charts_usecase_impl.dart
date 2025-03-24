@@ -7,8 +7,8 @@ class ChartsUseCaseImpl implements ChartsUseCase {
   @override
   Future<List<List<Point>>> buildTriangle(
       List<double> data, int countTerm) async {
-    double minVal = data.reduce((a, b) => a < b ? a : b);
-    double maxVal = data.reduce((a, b) => a > b ? a : b);
+    double minVal = 0;
+    double maxVal = 1;
 
     double step = (maxVal - minVal) / (countTerm - 1);
 
@@ -51,8 +51,8 @@ class ChartsUseCaseImpl implements ChartsUseCase {
   @override
   Future<List<List<Point>>> buildParabolic(
       List<double> data, int countTerm) async {
-    double minVal = data.reduce((a, b) => a < b ? a : b);
-    double maxVal = data.reduce((a, b) => a > b ? a : b);
+    double minVal = 0;
+    double maxVal = 1;
 
     double step = (maxVal - minVal) / (countTerm - 1);
 
@@ -87,8 +87,8 @@ class ChartsUseCaseImpl implements ChartsUseCase {
   @override
   Future<List<List<Point>>> buildTrapezoidal(
       List<double> data, int countTerm) async {
-    double minVal = data.reduce((a, b) => a < b ? a : b);
-    double maxVal = data.reduce((a, b) => a > b ? a : b);
+    double minVal = 0;
+    double maxVal = 1;
 
     double step = (maxVal - minVal) / (countTerm - 1);
     double baseWidth = step * 0.5; // Ширина горизонтального верха трапеции
@@ -138,8 +138,8 @@ class ChartsUseCaseImpl implements ChartsUseCase {
   @override
   Future<List<List<Point>>> buildGaussian(
       List<double> data, int countTerm) async {
-    double minVal = data.reduce((a, b) => a < b ? a : b);
-    double maxVal = data.reduce((a, b) => a > b ? a : b);
+    double minVal = 0;
+    double maxVal = 1;
 
     double step = (maxVal - minVal) / (countTerm - 1);
     double sigma = step / 2; // Стандартное отклонение для гауссианы

@@ -13,8 +13,8 @@ class MembershipUseCaseImpl implements MembershipUseCase {
   Future<List<List<Point>>> gaussians(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = data.reduce(min);
-    double maxVal = data.reduce(max);
+    double minVal = 0;
+    double maxVal = 1;
     double step = (maxVal - minVal) / (countTerm - 1);
     double sigma = step / 2; // Разброс
 
@@ -39,8 +39,8 @@ class MembershipUseCaseImpl implements MembershipUseCase {
   Future<List<List<Point>>> parabolas(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = data.reduce(min);
-    double maxVal = data.reduce(max);
+    double minVal = 0;
+    double maxVal = 1;
     double step = (maxVal - minVal) / (countTerm - 1);
 
     List<List<Point>> allMemberships = [];
@@ -67,8 +67,8 @@ class MembershipUseCaseImpl implements MembershipUseCase {
   Future<List<List<Point>>> trapezoids(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = data.reduce(min);
-    double maxVal = data.reduce(max);
+    double minVal = 0;
+    double maxVal = 1;
     double step = (maxVal - minVal) / (countTerm - 1);
 
     List<List<Point>> allMemberships = [];
@@ -98,8 +98,8 @@ class MembershipUseCaseImpl implements MembershipUseCase {
   Future<List<List<Point>>> triangles(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = data.reduce(min);
-    double maxVal = data.reduce(max);
+    double minVal = 0;
+    double maxVal = 1;
     double step = (maxVal - minVal) / (countTerm - 1);
 
     List<List<Point>> allMemberships = [];
