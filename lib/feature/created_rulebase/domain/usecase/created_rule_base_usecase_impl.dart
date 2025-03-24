@@ -144,54 +144,35 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     return unityMatrix;
   }
 
-  void _generateSingleton(
-    List<List<double>> xMatrix,
-    List<List<double>> yMatrix,
-    int row,
-    List<double> current,
-    double sumNumerator,
-    double sumDenominator,
-  ) {
-    if (row == xMatrix.length) {
-      for (int column = 0; column < yMatrix[0].length; column++) {
-        double multiple = 1;
-        for (var x in current) {
-          multiple *= x;
-        }
-        sumDenominator += multiple;
-        sumNumerator += (multiple * yMatrix[0][column]);
-      }
-      return;
-    }
-
-    for (int col = 0; col < xMatrix[row].length; col++) {
-      current.add(xMatrix[row][col]);
-      _generateSingleton(
-        xMatrix,
-        yMatrix,
-        row + 1,
-        current,
-        sumNumerator,
-        sumDenominator,
-      );
-      current.removeLast();
-    }
-  }
-
   @override
-  Future<double> singleton(RulesData rulesData) async {
-    final unityMatrix = await _createMatrix(rulesData);
+  Future<double> singletonMethod() async {
+    final rulesString = await rulesStorage.getRules();
+    final listRule = Rule.fromJsonToList(rulesString!);
+
     double sumNumerator = 0;
-    double sumDenominator = 1;
-    _generateSingleton(
-      unityMatrix[0],
-      unityMatrix[1],
-      0,
-      [],
-      sumNumerator,
-      sumDenominator,
-    );
+    double sumDenominator = 0;
+
+    for (final rule in listRule) {
+      double productX = 1;
+      for (final xVal in rule.x) {
+        productX *= (xVal < 0.01) ? 1 : xVal;
+      }
+      print('productX: $productX');
+      sumDenominator += productX;
+      print('sumDenominator: $sumDenominator');
+      sumNumerator += productX * rule.y;
+      print('sumNumerator: $sumNumerator');
+    }
+
+    if (sumDenominator == 0) {
+      return 0;
+    }
+
+    print('Итог sumNumerator: $sumNumerator');
+    print('Итог sumDenominator: $sumDenominator');
+
     final singleton = sumNumerator / sumDenominator;
+    print(singleton);
     return singleton;
   }
 }

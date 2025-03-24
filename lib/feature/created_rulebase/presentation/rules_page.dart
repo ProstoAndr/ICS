@@ -123,7 +123,7 @@ class _RulesPageState extends State<RulesPage> {
                                     const Gap(16),
                                     ElevatedButton(
                                       onPressed: () {
-                                        cubit.saveFile(widget.ruleParams);
+                                        cubit.saveFile();
                                       },
                                       child: const Text('Скачать файл правил'),
                                     ),
