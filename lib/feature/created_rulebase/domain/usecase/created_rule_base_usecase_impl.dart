@@ -4,16 +4,27 @@ import 'dart:math';
 import 'package:ics/feature/created_rulebase/domain/enity/rules_data.dart';
 import 'package:ics/feature/displaying_graphs/domain/entity/point.dart';
 
+import '../../boundary/storage/rules_storage.dart';
 import '../../boundary/usecase/created_rule_base_usecase.dart';
 import '../enity/rule.dart';
 
 class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
+  final RulesStorage rulesStorage;
+
+  CreatedRuleBaseUseCaseImpl({required this.rulesStorage});
+
   @override
   Future<void> ruleBaseGeneration(RulesData rulesData) async {
     List<Rule> rules = [];
     final unityMatrix = await _createMatrix(rulesData);
     _generateCombinations(unityMatrix[0], unityMatrix[1], 0, [], rules);
-    _creatingFile(rules);
+    final rulesString = await rulesStorage.getRules();
+    if (rulesString == null) {
+      rulesStorage.saveRules(Rule.toJsonStrList(rules));
+    } else {
+      rulesStorage.removeRules();
+      rulesStorage.saveRules(Rule.toJsonStrList(rules));
+    }
   }
 
   void _generateCombinations(
@@ -46,10 +57,11 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     }
   }
 
-  Future<void> _creatingFile(List<Rule> rules) async {
-    String jsonStr = Rule.toJsonStrList(rules);
+  @override
+  Future<void> creatingFile() async {
+    final rulesString = await rulesStorage.getRules();
 
-    final bytes = utf8.encode(jsonStr);
+    final bytes = utf8.encode(rulesString!);
     final blob = html.Blob([bytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
 
