@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ics/feature/created_rulebase/data/rules_storage_impl.dart';
+import 'package:ics/feature/created_rulebase/domain/enity/rule_params.dart';
+import 'package:ics/feature/created_rulebase/domain/usecase/created_rule_base_usecase_impl.dart';
+import 'package:ics/feature/created_rulebase/presentation/cubit/rules_cubit.dart';
+import 'package:ics/feature/created_rulebase/presentation/rules_page.dart';
 import 'package:ics/feature/displaying_graphs/domain/usecase/charts_usecase_impl.dart';
 import 'package:ics/feature/displaying_graphs/domain/usecase/membership_usecase_impl.dart';
 import 'package:ics/feature/displaying_graphs/presentation/charts_page.dart';
@@ -41,6 +46,19 @@ class AppRouterInit {
                 );
               },
             ),
+            GoRoute(
+              path: Routes.rules,
+              builder: (context, state) {
+                final params = state.extra as RuleParams?;
+                  return BlocProvider(
+                    create: (_) => RulesCubit(
+                      createdRuleBaseUseCase: CreatedRuleBaseUseCaseImpl(
+                        rulesStorage: RulesStorageImpl(),
+                      ),
+                    ),
+                    child: RulesPage(ruleParams: params),
+                  );
+                }),
           ],
           errorPageBuilder: (context, state) {
             return MaterialPage(
@@ -59,4 +77,5 @@ class AppRouterInit {
 class Routes {
   static const initData = '/';
   static const charts = '/charts';
+  static const rules = '/rules';
 }
