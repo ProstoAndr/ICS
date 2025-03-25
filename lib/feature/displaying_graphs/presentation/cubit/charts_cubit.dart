@@ -78,6 +78,7 @@ class ChartsCubit extends Cubit<ChartsState> {
         countTerm: countTerm,
         countPlenty: plenties.length,
         allCharts: allCharts,
+        plenties: plenties,
       ),
     );
 
