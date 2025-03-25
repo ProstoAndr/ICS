@@ -32,10 +32,8 @@ class Rule {
   }
 
   static List<Rule> fromJsonToList(String jsonStr) {
-    final Map<String, dynamic> jsonResponse = jsonDecode(jsonStr);
-    final List<dynamic> objects = jsonResponse['objects'] ?? [];
-
-    return objects.map((content) => Rule.fromJson(content)).toList();
+    final List<dynamic> jsonList = jsonDecode(jsonStr);
+    return jsonList.map((content) => Rule.fromJson(content)).toList();
   }
 
   String toJsonStr() {

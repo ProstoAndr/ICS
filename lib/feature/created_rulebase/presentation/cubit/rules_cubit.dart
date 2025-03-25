@@ -33,12 +33,8 @@ class RulesCubit extends Cubit<RulesState> {
     }
   }
 
-  Future<void> saveFile(RuleParams? ruleParams) async {
-    if (ruleParams == null) {
-      throw UnimplementedError();
-    } else {
-      await createdRuleBaseUseCase.creatingFile();
-      await createdRuleBaseUseCase.singleton(ruleParams.rulesData);
-    }
+  Future<void> saveFile() async {
+    await createdRuleBaseUseCase.creatingFile();
+    await createdRuleBaseUseCase.singletonMethod();
   }
 }
