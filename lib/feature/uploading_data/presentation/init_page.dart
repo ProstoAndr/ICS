@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ics/init/app_router_init.dart';
 import 'package:ics/theme/main_colors.dart';
 
 import '../domain/entity/chart_params.dart';
+import 'cubit/upload_file_cubit.dart';
 import 'widgets/excel_file_uploader.dart';
 
 class InitPage extends StatefulWidget {
@@ -98,24 +100,41 @@ class _InitPageState extends State<InitPage> {
               ),
               const Gap(32),
               Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    final termCount = int.tryParse(termController.text);
-                    if (termCount == null || termCount <= 2 || termCount >= 11) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Введите корректное число термов"),
-                        ),
+                child: BlocBuilder<UploadFileCubit, UploadFileState>(
+                  builder: (context, state) {
+                    if (state is UploadFileLoaded) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          final termCount = int.tryParse(termController.text);
+                          if (termCount == null ||
+                              termCount <= 2 ||
+                              termCount >= 11) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text("Введите корректное число термов"),
+                              ),
+                            );
+                            return;
+                          }
+                          final chartIndex = chartTypes.indexOf(selectedChart);
+                          context.go(
+                            Routes.charts,
+                            extra: ChartParams(
+                              chartIndex: chartIndex,
+                              termCount: termCount,
+                              listPlenty: state.listPlenty,
+                            ),
+                          );
+                        },
+                        child: const Text('Построить графики'),
                       );
-                      return;
                     }
-                    final chartIndex = chartTypes.indexOf(selectedChart);
-                    context.go(
-                      Routes.charts,
-                      extra: ChartParams(chartIndex: chartIndex, termCount: termCount),
+                    return ElevatedButton(
+                      onPressed: () {},
+                      child: const Text('Построить графики'),
                     );
                   },
-                  child: const Text('Построить графики'),
                 ),
               ),
             ],

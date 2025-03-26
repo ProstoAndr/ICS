@@ -10,7 +10,10 @@ import 'package:ics/feature/displaying_graphs/domain/usecase/charts_usecase_impl
 import 'package:ics/feature/displaying_graphs/domain/usecase/membership_usecase_impl.dart';
 import 'package:ics/feature/displaying_graphs/presentation/charts_page.dart';
 import 'package:ics/feature/displaying_graphs/presentation/cubit/charts_cubit.dart';
+import 'package:ics/feature/uploading_data/data/storage/file_storage_impl.dart';
 import 'package:ics/feature/uploading_data/domain/entity/chart_params.dart';
+import 'package:ics/feature/uploading_data/domain/usecase/upload_file_usecase_impl.dart';
+import 'package:ics/feature/uploading_data/presentation/cubit/upload_file_cubit.dart';
 import 'package:ics/feature/uploading_data/presentation/init_page.dart';
 
 class AppRouterInit {
@@ -22,7 +25,16 @@ class AppRouterInit {
           routes: [
             GoRoute(
               path: Routes.initData,
-              builder: (context, state) => const InitPage(),
+              builder: (context, state) {
+                return BlocProvider(
+                  create: (_) => UploadFileCubit(
+                    uploadFileUseCase: UploadFileUseCaseImpl(
+                      fileStorage: FileStorageImpl(),
+                    ),
+                  ),
+                  child: const InitPage(),
+                );
+              },
             ),
             GoRoute(
               path: Routes.charts,
@@ -31,6 +43,7 @@ class AppRouterInit {
 
                 final chartIndex = params?.chartIndex ?? 0;
                 final termCount = params?.termCount ?? 0;
+                final listPlenty = params?.listPlenty ?? [];
 
                 return BlocProvider(
                   create: (_) => ChartsCubit(
@@ -42,14 +55,15 @@ class AppRouterInit {
                   child: ChartsPage(
                     chartIndex: chartIndex,
                     termCount: termCount,
+                    listPlenty: listPlenty,
                   ),
                 );
               },
             ),
             GoRoute(
-              path: Routes.rules,
-              builder: (context, state) {
-                final params = state.extra as RuleParams?;
+                path: Routes.rules,
+                builder: (context, state) {
+                  final params = state.extra as RuleParams?;
                   return BlocProvider(
                     create: (_) => RulesCubit(
                       createdRuleBaseUseCase: CreatedRuleBaseUseCaseImpl(

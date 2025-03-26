@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ics/feature/created_rulebase/domain/enity/rule_params.dart';
-import 'package:ics/feature/created_rulebase/domain/enity/rules_data.dart';
 import 'package:ics/init/app_router_init.dart';
 import 'package:ics/theme/main_colors.dart';
 import 'package:ics/utils/browser_helper.dart';
 
+import '../domain/entity/plenty.dart';
 import 'cubit/charts_cubit.dart';
 import 'widgets/created_charts.dart';
 
 class ChartsPage extends StatefulWidget {
   final int chartIndex;
   final int termCount;
+  final List<Plenty> listPlenty;
 
   const ChartsPage({
     super.key,
     required this.chartIndex,
     required this.termCount,
+    required this.listPlenty,
   });
 
   @override
@@ -32,7 +33,7 @@ class _ChartsPageState extends State<ChartsPage> {
   void initState() {
     super.initState();
     final cubit = BlocProvider.of<ChartsCubit>(context);
-    cubit.buildCharts(widget.chartIndex, widget.termCount);
+    cubit.buildCharts(widget.chartIndex, widget.termCount, widget.listPlenty);
   }
 
   @override

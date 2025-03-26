@@ -20,21 +20,18 @@ class ChartsCubit extends Cubit<ChartsState> {
     required this.membershipUseCase,
   }) : super(ChartsInitial());
 
-   final List<Plenty> plenties = [
-     Plenty(name: "Rain", data: [0.75,0,0,0,0,0,0,0,0.25,0,0,0,0.25,0.5,0.75,0.75,0.25,0.25,0,0,0,0.5,0.75,0,0.25,0.25,0,0.25,0.5,0.5,1]),
-     Plenty(name: "Snowfall", data: [0,0.2,0.33333,0.26667,0.26667,0.13333,0.2,0.06667,0,0.06667,0.06667,0.26667,0.26667,0.13333,0.06667,0.06667,0.2,1,0.13333,0.86667,0.13333,0.06667,0,0,0.53333,0.33333,0.33333,0.26667,0.2,0.26667,0.06667]),
-     Plenty(name: "Cloud Cover", data: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]),
-     Plenty(name: "Weather Code", data: [0,0.5,0.5,0.5,0.5,0.5,0.5,0,0,0,0,0.5,0.5,0.5,0,0,0.5,1,0.5,1,0.5,0,0,0,0.5,0.5,0.5,0.5,0.5,0.5,0])
-  ];
-
   String nameMethod = '';
   RuleParams? ruleParams;
 
-  void buildCharts(int numberChart, int countTerm) async {
+  void buildCharts(
+    int numberChart,
+    int countTerm,
+    List<Plenty> listPlenty,
+  ) async {
     emit(ChartsLoading());
 
     List<ChartData> allCharts = [];
-    for (final plenty in plenties) {
+    for (final plenty in listPlenty) {
       List<List<Point>> graphData;
       List<List<Point>> membershipData;
 
@@ -76,9 +73,9 @@ class ChartsCubit extends Cubit<ChartsState> {
       nameMethod: nameMethod,
       rulesData: RulesData(
         countTerm: countTerm,
-        countPlenty: plenties.length,
+        countPlenty: listPlenty.length,
         allCharts: allCharts,
-        plenties: plenties,
+        plenties: listPlenty,
       ),
     );
 
