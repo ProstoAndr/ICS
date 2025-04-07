@@ -14,9 +14,9 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
   CreatedRuleBaseUseCaseImpl({required this.rulesStorage});
 
   @override
-  Future<void> ruleBaseGeneration(RulesData rulesData) async {
+  Future<List<Rule>?> ruleBaseGeneration(RulesData rulesData) async {
     final int N = rulesData.countPlenty;
-    if (N < 2) return;
+    if (N < 2) return null;
 
     final int outputIndex = N - 1;
     final int m = rulesData.countTerm;
@@ -103,9 +103,11 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     final rulesString = await rulesStorage.getRules();
     if (rulesString == null) {
       rulesStorage.saveRules(Rule.toJsonStrList(finalRules));
+      return finalRules;
     } else {
       rulesStorage.removeRules();
       rulesStorage.saveRules(Rule.toJsonStrList(finalRules));
+      return finalRules;
     }
   }
 
@@ -184,7 +186,6 @@ class CreatedRuleBaseUseCaseImpl implements CreatedRuleBaseUseCase {
     }
 
     if (sumDen == 0) return 0.0;
-    print(sumNum / sumDen);
     return sumNum / sumDen;
   }
 }

@@ -4,7 +4,7 @@ class Rule {
   final String id;
   final List<double> x;
   final double y;
-  final double weight;
+  double weight;
 
   Rule({
     required this.id,
