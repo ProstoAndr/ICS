@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ics/feature/created_rulebase/domain/enity/rule_params.dart';
+import 'package:ics/feature/displaying_graphs/domain/entity/chart_data.dart';
+import 'package:ics/feature/displaying_graphs/domain/entity/plenty.dart';
 
 import '../../boundary/usecase/created_rule_base_usecase.dart';
 import '../../domain/enity/rule.dart';
@@ -36,6 +38,8 @@ class RulesCubit extends Cubit<RulesState> {
             countRules: 'Количесвто правил: $countRules',
             singleton: singleton,
             listRule: listRule,
+            plenties: ruleParams.rulesData.plenties,
+            membershipAll: ruleParams.rulesData.allCharts
           ),
         );
       }

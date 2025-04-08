@@ -3,7 +3,7 @@ import 'dart:convert';
 class Rule {
   final String id;
   final List<double> x;
-  final double y;
+  double y;
   double weight;
 
   Rule({

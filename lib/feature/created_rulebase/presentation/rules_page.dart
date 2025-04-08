@@ -153,6 +153,8 @@ class _RulesPageState extends State<RulesPage> {
                                   child: TrainingSchedule(
                                     listRule: state.listRule,
                                     singleton: state.singleton,
+                                    plenties: state.plenties,
+                                    membershipAll: state.membershipAll,
                                   )),
                             ),
                           ],
