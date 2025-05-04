@@ -47,6 +47,6 @@ class ModelTrainingCubit extends Cubit<ModelTrainingState> {
       listChartData: membershipAll,
       listRule: listRule,
     );
-    debugPrint("MSE: $predictTSK");
+    debugPrint("MSE: ${predictTSK.round()}%");
   }
 }

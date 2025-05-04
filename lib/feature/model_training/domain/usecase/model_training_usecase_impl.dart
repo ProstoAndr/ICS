@@ -206,6 +206,6 @@ class ModelTrainingUseCaseImpl implements ModelTrainingUseCase {
     debugPrint('meanError=${sqrt(meanError)};');
     debugPrint('\n');
 
-    return sqrt(meanError * 100);
+    return sqrt(meanError)*100;
   }
 }
