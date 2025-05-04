@@ -5,8 +5,7 @@ import '../entity/point.dart';
 
 class ChartsUseCaseImpl implements ChartsUseCase {
   @override
-  Future<List<List<Point>>> buildTriangle(
-      List<double> data, int countTerm) async {
+  Future<List<List<Point>>> buildTriangle(int countTerm) async {
     double minVal = 0;
     double maxVal = 1;
 

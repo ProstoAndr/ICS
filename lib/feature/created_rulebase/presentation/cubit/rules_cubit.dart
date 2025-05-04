@@ -14,8 +14,6 @@ part 'rules_state.dart';
 class RulesCubit extends Cubit<RulesState> {
   final CreatedRuleBaseUseCase createdRuleBaseUseCase;
 
-  late double singleton;
-
   RulesCubit({
     required this.createdRuleBaseUseCase,
   }) : super(RulesInitial());
@@ -26,17 +24,15 @@ class RulesCubit extends Cubit<RulesState> {
     } else {
       emit(RulesLoading());
       final listRule = await createdRuleBaseUseCase.ruleBaseGeneration(ruleParams.rulesData);
-      final num countRules = pow(ruleParams.rulesData.countTerm, ruleParams.rulesData.countPlenty);
-      singleton = await createdRuleBaseUseCase.singletonMethod();
+      final num countRules = pow(ruleParams.rulesData.countTerm, ruleParams.rulesData.countPlenty-1);
       if(listRule != null) {
         emit(
           RulesCreated(
             nameMethod: 'Название метода: ${ruleParams.nameMethod}',
-            countTerm: 'Количесвто термов: ${ruleParams.rulesData.countTerm}',
-            countPlenty: 'Количесвто литеров: ${ruleParams.rulesData
+            countTerm: 'Количество термов: ${ruleParams.rulesData.countTerm}',
+            countPlenty: 'Количество литеров: ${ruleParams.rulesData
                 .countPlenty}',
-            countRules: 'Количесвто правил: $countRules',
-            singleton: singleton,
+            countRules: 'Количество правил: $countRules',
             listRule: listRule,
             plenties: ruleParams.rulesData.plenties,
             membershipAll: ruleParams.rulesData.allCharts

@@ -13,7 +13,6 @@ class RulesCreated extends RulesState {
   final String countPlenty;
   final String countRules;
   final List<Rule> listRule;
-  final double singleton;
   final List<Plenty> plenties;
   final List<ChartData> membershipAll;
 
@@ -23,7 +22,6 @@ class RulesCreated extends RulesState {
     required this.countPlenty,
     required this.countRules,
     required this.listRule,
-    required this.singleton,
     required this.plenties,
     required this.membershipAll,
   });

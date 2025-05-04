@@ -9,14 +9,12 @@ import '../cubit/model_training_cubit.dart';
 
 class TrainingSchedule extends StatefulWidget {
   final List<Rule> listRule;
-  final double singleton;
   final List<Plenty> plenties;
   final List<ChartData> membershipAll;
 
   const TrainingSchedule({
     super.key,
     required this.listRule,
-    required this.singleton,
     required this.plenties,
     required this.membershipAll,
   });
@@ -37,7 +35,6 @@ class _TrainingScheduleState extends State<TrainingSchedule> {
             onPressed: () {
               cubit.training(
                 widget.listRule,
-                widget.singleton,
                 widget.plenties,
                 widget.membershipAll,
               );

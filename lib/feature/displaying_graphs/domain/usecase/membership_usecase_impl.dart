@@ -98,8 +98,8 @@ class MembershipUseCaseImpl implements MembershipUseCase {
   Future<List<List<Point>>> triangles(List<double> data, int countTerm) async {
     if (data.isEmpty) return [];
 
-    double minVal = 0;
-    double maxVal = 1;
+    const double minVal = 0;
+    const double maxVal = 1;
     double step = (maxVal - minVal) / (countTerm - 1);
 
     List<List<Point>> allMemberships = [];

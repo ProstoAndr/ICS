@@ -21,43 +21,22 @@ class ModelTrainingCubit extends Cubit<ModelTrainingState> {
 
   Future<void> training(
       List<Rule> listRule,
-      double singleton,
       List<Plenty> plenties,
       List<ChartData> membershipAll,
       ) async {
     emit(ModelTrainingLoading());
 
-    // Дадим Flutter успеть перерисовать крутилку
     await Future.delayed(Duration.zero);
 
-    // Запускаем compute, передавая анонимную функцию
-    final newRules = await compute<_TrainParams, List<Rule>>(
-      _trainInIsolate,
-      _TrainParams(
-        listRule: listRule,
-        singleton: singleton,
-        plenties: plenties,
-        membershipAll: membershipAll,
-      ),
+    final newRules = await modelTrainingUseCase.modelTraining(
+      listPlenty: plenties,
+      listChartData: membershipAll,
+      listRule: listRule,
     );
 
     updatedRules = newRules;
     emit(ModelTrainingCreated());
   }
-
-  List<Rule> _trainInIsolate(_TrainParams params) {
-    // Здесь мы вызываем ваш UseCase:
-    // Или как у вас там инициализация.
-
-    // Выполняем саму логику внутри изолята:
-    return modelTrainingUseCase.gradientDescent(
-      params.listRule,
-      params.singleton,
-      params.plenties,
-      params.membershipAll,
-    );
-  }
-
 
   Future<void> predictTSK(List<ChartData> membershipAll) async {
     final predictTSK = await modelTrainingUseCase.predictTSK(
@@ -65,22 +44,8 @@ class ModelTrainingCubit extends Cubit<ModelTrainingState> {
       x1: 0.0357142857142857,
       x2: 1,
       listRule: updatedRules,
-      membershipAll: membershipAll,
+      listChartData: membershipAll,
     );
     print(predictTSK);
   }
-}
-
-class _TrainParams {
-  final List<Rule> listRule;
-  final double singleton;
-  final List<Plenty> plenties;
-  final List<ChartData> membershipAll;
-
-  _TrainParams({
-    required this.listRule,
-    required this.singleton,
-    required this.plenties,
-    required this.membershipAll,
-  });
 }

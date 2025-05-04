@@ -5,7 +5,5 @@ import '../../domain/enity/rule.dart';
 abstract class CreatedRuleBaseUseCase {
   Future<List<Rule>?> ruleBaseGeneration(RulesData rulesData);
 
-  Future<double> singletonMethod();
-
   Future<void> creatingFile();
 }
