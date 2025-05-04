@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:ics/feature/created_rulebase/data/rules_storage_impl.dart';
 import 'package:ics/feature/created_rulebase/domain/enity/rule_params.dart';
 import 'package:ics/feature/created_rulebase/presentation/widgets/item_data_rules.dart';
+import 'package:ics/feature/model_training/domain/usecase/model_training_usecase_impl.dart';
+import 'package:ics/feature/model_training/presentation/cubit/model_training_cubit.dart';
+import 'package:ics/feature/model_training/presentation/widgets/training_schedule.dart';
 import 'package:ics/theme/main_colors.dart';
 
+import '../domain/enity/rule.dart';
 import 'cubit/rules_cubit.dart';
 
 class RulesPage extends StatefulWidget {
@@ -51,91 +56,114 @@ class _RulesPageState extends State<RulesPage> {
               child: Column(
                 children: [
                   const Gap(32),
-                  Container(
-                    width: 840 - 32 - 16,
-                    decoration: BoxDecoration(
-                      color: MainColors.neutral010,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 32,
-                      ),
-                      child: BlocBuilder<RulesCubit, RulesState>(
-                        builder: (context, state) {
-                          if (state is RulesLoading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (state is RulesCreated) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 180,
-                                  height: 180,
-                                  decoration: BoxDecoration(
-                                    color: MainColors.neutral030,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.file_open,
-                                      size: 80,
-                                    ),
-                                  ),
+                  BlocBuilder<RulesCubit, RulesState>(
+                    builder: (context, state) {
+                      if (state is RulesLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (state is RulesCreated) {
+                        return Column(
+                          children: [
+                            Container(
+                              width: 840 - 32 - 16,
+                              decoration: BoxDecoration(
+                                color: MainColors.neutral010,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 32,
                                 ),
-                                Column(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
-                                      width: 516,
+                                      width: 180,
+                                      height: 180,
                                       decoration: BoxDecoration(
                                         color: MainColors.neutral030,
                                         borderRadius: BorderRadius.circular(16),
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 16,
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.file_open,
+                                          size: 80,
                                         ),
-                                        child: Column(children: [
-                                          ItemDataRules(
-                                            parameter: state.nameMethod,
-                                          ),
-                                          const Gap(4),
-                                          ItemDataRules(
-                                            parameter: state.countTerm,
-                                          ),
-                                          const Gap(4),
-                                          ItemDataRules(
-                                            parameter: state.countPlenty,
-                                          ),
-                                          const Gap(4),
-                                          ItemDataRules(
-                                            parameter: state.countRules,
-                                          ),
-                                        ]),
                                       ),
                                     ),
-                                    const Gap(16),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        cubit.saveFile();
-                                      },
-                                      child: const Text('Скачать файл правил'),
+                                    Column(
+                                      children: [
+                                        Container(
+                                          width: 516,
+                                          decoration: BoxDecoration(
+                                            color: MainColors.neutral030,
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 16,
+                                            ),
+                                            child: Column(children: [
+                                              ItemDataRules(
+                                                parameter: state.nameMethod,
+                                              ),
+                                              const Gap(4),
+                                              ItemDataRules(
+                                                parameter: state.countTerm,
+                                              ),
+                                              const Gap(4),
+                                              ItemDataRules(
+                                                parameter: state.countPlenty,
+                                              ),
+                                              const Gap(4),
+                                              ItemDataRules(
+                                                parameter: state.countRules,
+                                              ),
+                                            ]),
+                                          ),
+                                        ),
+                                        const Gap(16),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            cubit.saveFile();
+                                          },
+                                          child: const Text('Скачать файл правил'),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                    ),
+                              ),
+                            ),
+                            const Gap(24),
+                            Container(
+                              width: 840 - 32 - 16,
+                              decoration: BoxDecoration(
+                                color: MainColors.neutral010,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: BlocProvider(
+                                  create: (_) => ModelTrainingCubit(
+                                    modelTrainingUseCase: ModelTrainingUseCaseImpl(
+                                      rulesStorage: RulesStorageImpl(),
+                                    ),
+                                  ),
+                                  child: TrainingSchedule(
+                                    listRule: state.listRule,
+                                    plenties: state.plenties,
+                                    membershipAll: state.membershipAll,
+                                  )),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox();
+                    },
                   ),
                 ],
               ),

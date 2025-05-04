@@ -3,13 +3,11 @@ import 'dart:convert';
 class Rule {
   final String id;
   final List<double> x;
-  final double y;
-  final double weight;
+  double weight;
 
   Rule({
     required this.id,
     required this.x,
-    required this.y,
     required this.weight,
   });
 
@@ -26,7 +24,6 @@ class Rule {
     return Rule(
       id: json['id'],
       x: List<double>.from(json['x']),
-      y: json['y'],
       weight: json['weight'],
     );
   }
@@ -44,7 +41,6 @@ class Rule {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['x'] = x;
-    data['y'] = y;
     data['weight'] = weight;
 
     return data;

@@ -38,7 +38,7 @@ class ChartsCubit extends Cubit<ChartsState> {
       switch (numberChart) {
         case 0:
           nameMethod = 'Треугольный';
-          graphData = await chartsUseCase.buildTriangle(plenty.data, countTerm);
+          graphData = await chartsUseCase.buildTriangle(countTerm);
           membershipData =
               await membershipUseCase.triangles(plenty.data, countTerm);
           break;

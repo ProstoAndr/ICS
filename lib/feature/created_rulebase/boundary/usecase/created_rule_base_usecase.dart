@@ -1,9 +1,9 @@
 import 'package:ics/feature/created_rulebase/domain/enity/rules_data.dart';
 
-abstract class CreatedRuleBaseUseCase {
-  Future<void> ruleBaseGeneration(RulesData rulesData);
+import '../../domain/enity/rule.dart';
 
-  Future<double> singletonMethod();
+abstract class CreatedRuleBaseUseCase {
+  Future<List<Rule>?> ruleBaseGeneration(RulesData rulesData);
 
   Future<void> creatingFile();
 }
