@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:html' as html;
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:ics/feature/created_rulebase/boundary/storage/rules_storage.dart';
 import 'package:ics/feature/created_rulebase/domain/enity/rule.dart';
 import 'package:ics/feature/displaying_graphs/domain/entity/chart_data.dart';
 import 'package:ics/feature/displaying_graphs/domain/entity/plenty.dart';
@@ -7,9 +12,13 @@ import 'package:ics/feature/displaying_graphs/domain/entity/point.dart';
 import '../../boudary/usecase/model_training_usecase.dart';
 
 class ModelTrainingUseCaseImpl implements ModelTrainingUseCase {
+  final RulesStorage rulesStorage;
+
   double _currentMj = 0.0;
   double _currentSumMj = 0.0;
   List<double> _mjRow = const [];
+
+  ModelTrainingUseCaseImpl({required this.rulesStorage});
 
   @override
   Future<List<Rule>> modelTraining({
@@ -19,7 +28,7 @@ class ModelTrainingUseCaseImpl implements ModelTrainingUseCase {
   }) async {
     const int countEpochs = 1000;
     const attenuationCoefficient = 0.95;
-    double learningRate = 0.08;
+    double learningRate = 0.2;
 
     final countWeight = listRule.length;
 
@@ -34,7 +43,10 @@ class ModelTrainingUseCaseImpl implements ModelTrainingUseCase {
     final List<Rule> temporaryListRule = List<Rule>.from(listRule);
 
     for (int epoch = 0; epoch < countEpochs; epoch++) {
+      debugPrint('Epoch=$epoch;');
       final List<double> sumWeight = List<double>.filled(countWeight, 0);
+      List<double> listError = [];
+      double sumError = 0;
 
       for (int row = 0; row < countRows; row++) {
         final List<double> inputValueRow = [
@@ -45,16 +57,26 @@ class ModelTrainingUseCaseImpl implements ModelTrainingUseCase {
         final predictedY = _singleton(
           inputValueRow,
           membershipAll,
-          listRule,
+          temporaryListRule,
         );
 
         final double expectedY = listPlenty[3].data[row];
 
+        final double error = 2 * (predictedY - expectedY);
+        // debugPrint(
+        //     'Epoch: $epoch\npredictedY=$predictedY; expectedY=$expectedY; Error=$error;');
+        listError.add(error);
+        sumError += error;
+
         for (int i = 0; i < countWeight; i++) {
           _currentMj = _mjRow[i];
-          sumWeight[i] += learningRate * _gradient(expectedY, predictedY);
+          final gradPart = _gradient(expectedY, predictedY, error);
+          final deltaWeight = learningRate * gradPart;
+          sumWeight[i] += deltaWeight;
         }
       }
+      final double meanError = (sumError * sumError) / (countRows * 4);
+      debugPrint('meanError=${sqrt(meanError)};');
 
       for (int i = 0; i < countWeight; i++) {
         final rule = temporaryListRule[i];
@@ -65,12 +87,14 @@ class ModelTrainingUseCaseImpl implements ModelTrainingUseCase {
         );
       }
 
-      if (epoch % 100 == 0) {
+      if (epoch % 500 == 0 && epoch != 0) {
         learningRate *= attenuationCoefficient;
       }
+      debugPrint('learningRate=$learningRate;');
+      debugPrint('\n');
     }
     newListRule.addAll(temporaryListRule);
-
+    await _creatingFile(newListRule);
     return newListRule;
   }
 
@@ -125,87 +149,63 @@ class ModelTrainingUseCaseImpl implements ModelTrainingUseCase {
     return bestMu;
   }
 
-  double _gradient(double expectedY, double predictedY) {
-    final double err = 2 * (predictedY - expectedY);
+  double _gradient(double expectedY, double predictedY, error) {
     final double gradPart =
-        _currentSumMj == 0 ? 0.0 : err * (_currentMj / _currentSumMj);
-    debugPrint('err=$err  mj=$_currentMj  Tk=$_currentSumMj  grad=$gradPart');
+        _currentSumMj == 0 ? 0.0 : error * (_currentMj / _currentSumMj);
     return gradPart;
+  }
+
+  Future<void> _creatingFile(List<Rule> newListRule) async {
+    final rulesString = Rule.toJsonStrList(newListRule);
+
+    final bytes = utf8.encode(rulesString);
+    final blob = html.Blob([bytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    html.AnchorElement(href: url)
+      ..setAttribute('download', 'NewRuleBase.txt')
+      ..click();
+
+    html.Url.revokeObjectUrl(url);
   }
 
   @override
   Future<double> predictTSK({
-    required double x0,
-    required double x1,
-    required double x2,
-    required List<Rule> listRule,
+    required List<Plenty> listPlenty,
     required List<ChartData> listChartData,
-  }) {
-    // TODO: implement predictTSK
-    throw UnimplementedError();
+    required List<Rule> listRule,
+  }) async {
+
+    final countRows = listPlenty.first.data.length;
+
+    final List<List<List<Point>>> membershipAll = [
+      for (final c in listChartData) c.membershipData
+    ];
+
+    double sumError = 0;
+
+    for (int row = 0; row < countRows; row++) {
+      final List<double> inputValueRow = [
+        listPlenty[0].data[row],
+        listPlenty[1].data[row],
+        listPlenty[2].data[row],
+      ];
+      final predictedY = _singleton(
+        inputValueRow,
+        membershipAll,
+        listRule,
+      );
+
+      final double expectedY = listPlenty[3].data[row];
+
+      final double error = 2 * (predictedY - expectedY);
+
+      sumError += error;
+    }
+    final double meanError = (sumError * sumError) / (countRows * 4);
+    debugPrint('meanError=${sqrt(meanError)};');
+    debugPrint('\n');
+
+    return sqrt(meanError * 100);
   }
 }
-
-//
-// @override
-// Future<double> predictTSK({
-//   required double x0,
-//   required double x1,
-//   required double x2,
-//   required List<Rule> listRule,
-//   required List<ChartData> membershipAll,
-// }) async {
-//   // Параметры
-//   final double eps = 1e-12;
-//
-//   // Для каждого правила r считаем α_r = min(...) по входам
-//   final alpha = List<double>.filled(listRule.length, 0.0);
-//
-//   for (int r = 0; r < listRule.length; r++) {
-//     final rule = listRule[r];
-//     double alphaR = 1.0;
-//
-//     for (int col = 0; col < 3; col++) {
-//       final int termIndex = rule.x[col].toInt();
-//       final double xVal = (col == 0) ? x0 : (col == 1) ? x1 : x2;
-//
-//       // Берём нужный набор точек функц. принадлежности
-//       final membershipPoints = membershipAll[col].membershipData[termIndex];
-//
-//       // Ищем mu через ближайшую точку
-//       final mu = _findMembership(xVal, membershipPoints);
-//
-//       // T-норма (MIN)
-//       if (mu < alphaR) alphaR = mu;
-//     }
-//     alpha[r] = alphaR;
-//   }
-//
-//   // Считаем выход: (Σ α[r]*w[r]*y[r]) / (Σ α[r]*w[r])
-//   double numerator   = 0.0;
-//   double denominator = 0.0;
-//   for (int r = 0; r < listRule.length; r++) {
-//     numerator   += alpha[r] * listRule[r].weight * listRule[r].weight;
-//     denominator += alpha[r] * listRule[r].weight;
-//   }
-//
-//   if (denominator.abs() < eps) {
-//     // Если все alpha[r] почти нули, возвращаем 0 или другое безопасное значение
-//     return 0.0;
-//   }
-//   return numerator / denominator;
-// }
-//
-// /// Находим mu(xVal) путём поиска ближайшей точки в membershipPoints
-// double _findMembership(double xVal, List<Point> membershipPoints) {
-//   double minDist = double.infinity;
-//   double bestMu = 0.0;
-//   for (final p in membershipPoints) {
-//     final dist = (p.x - xVal).abs();
-//     if (dist < minDist) {
-//       minDist = dist;
-//       bestMu = p.y;  // берём значение принадлежности точки
-//     }
-//   }
-//   return bestMu;
-// }

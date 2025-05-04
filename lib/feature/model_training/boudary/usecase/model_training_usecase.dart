@@ -11,10 +11,8 @@ abstract class ModelTrainingUseCase {
   });
 
   Future<double> predictTSK({
-    required double x0,
-    required double x1,
-    required double x2,
-    required List<Rule> listRule,
+    required List<Plenty> listPlenty,
     required List<ChartData> listChartData,
+    required List<Rule> listRule,
   });
 }

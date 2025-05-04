@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:ics/feature/created_rulebase/data/rules_storage_impl.dart';
 import 'package:ics/feature/created_rulebase/domain/enity/rule_params.dart';
 import 'package:ics/feature/created_rulebase/presentation/widgets/item_data_rules.dart';
 import 'package:ics/feature/model_training/domain/usecase/model_training_usecase_impl.dart';
@@ -148,7 +149,9 @@ class _RulesPageState extends State<RulesPage> {
                               ),
                               child: BlocProvider(
                                   create: (_) => ModelTrainingCubit(
-                                    modelTrainingUseCase: ModelTrainingUseCaseImpl(),
+                                    modelTrainingUseCase: ModelTrainingUseCaseImpl(
+                                      rulesStorage: RulesStorageImpl(),
+                                    ),
                                   ),
                                   child: TrainingSchedule(
                                     listRule: state.listRule,

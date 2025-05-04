@@ -18,12 +18,11 @@ class ModelTrainingCubit extends Cubit<ModelTrainingState> {
 
   late List<Rule> updatedRules;
 
-
   Future<void> training(
-      List<Rule> listRule,
-      List<Plenty> plenties,
-      List<ChartData> membershipAll,
-      ) async {
+    List<Rule> listRule,
+    List<Plenty> plenties,
+    List<ChartData> membershipAll,
+  ) async {
     emit(ModelTrainingLoading());
 
     await Future.delayed(Duration.zero);
@@ -35,17 +34,19 @@ class ModelTrainingCubit extends Cubit<ModelTrainingState> {
     );
 
     updatedRules = newRules;
-    emit(ModelTrainingCreated());
+    emit(ModelTrainingCreated(updatedRules: updatedRules));
   }
 
-  Future<void> predictTSK(List<ChartData> membershipAll) async {
+  Future<void> predictTSK(
+    List<Rule> listRule,
+    List<Plenty> plenties,
+    List<ChartData> membershipAll,
+  ) async {
     final predictTSK = await modelTrainingUseCase.predictTSK(
-      x0: 0,
-      x1: 0.0357142857142857,
-      x2: 1,
-      listRule: updatedRules,
+      listPlenty: plenties,
       listChartData: membershipAll,
+      listRule: listRule,
     );
-    print(predictTSK);
+    debugPrint("MSE: $predictTSK");
   }
 }
